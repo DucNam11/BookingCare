@@ -5,7 +5,6 @@ require('dotenv').config();
 let postBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(data.email)
             if (!data.email || !data.doctorId || !data.timeType || !data.date) {
                 resolve({
                     errCode: 1,
@@ -21,7 +20,7 @@ let postBookAppointment = (data) => {
                     },
                 });
 
-                console.log(user)
+                console.log(user[0])
 
                 if (user && user[0]) {
                     await db.Booking.findOrCreate({
