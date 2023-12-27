@@ -66,7 +66,7 @@ class BookingModal extends Component {
 
                             <div className='row'>
                                 <div className='col-6 form-group'>
-                                    <label>Ho ten</label>
+                                    <label>Ho tên </label>
                                     <input className='form-control' />
                                 </div>
                                 <div className='col-6 form-group'>
