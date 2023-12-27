@@ -4,6 +4,8 @@ import Select from 'react-select';
 import './BookingModal.scss';
 import { FormattedMessage } from 'react-intl';
 import { Modal } from 'reactstrap'
+import ProfileDoctor from '../ProfileDoctor';
+import _ from 'lodash';
 
 class BookingModal extends Component {
 
@@ -30,6 +32,11 @@ class BookingModal extends Component {
 
     render() {
         let { isOpenModal, closeBookingModal, dataTime } = this.props;
+        let doctorId = '';
+        if (dataTime && !_.isEmpty(dataTime)) {
+            doctorId = dataTime.doctorId
+        }
+
         return (
 
             //toggle
@@ -46,17 +53,17 @@ class BookingModal extends Component {
                                 thong tin dat lich kham benh
                             </span>
                             <span className='right' onClick={closeBookingModal}>
-                                <i class='fas fa-times'></i>
+                                <i className='fas fa-times'></i>
                             </span>
                         </div>
                         <div className='booking-modal-body'>
                             {/* {JSON.stringify(dataTime)} */}
                             <div className='doctor-infor'>
+                                <ProfileDoctor
+                                    doctorId={doctorId}
+                                />
+                            </div>
 
-                            </div>
-                            <div className='price'>
-                                gia kham 500.000VND
-                            </div>
                             <div className='row'>
                                 <div className='col-6 form-group'>
                                     <label>Ho ten</label>
