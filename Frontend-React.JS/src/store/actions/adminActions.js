@@ -24,7 +24,7 @@ export const fetchGenderStart = () => {
 }
 
 export const fetchGenderSuccess = (genderData) => ({
-    type: actionTypes.FETCH_GENDER_SUCCRSS,
+    type: actionTypes.FETCH_GENDER_SUCCESS,
     data: genderData
 })
 
@@ -51,7 +51,6 @@ export const fetchPositionFailed = () => ({
 export const fetchPositionStart = () => {
     return async (dispatch, getState) => {
         try {
-            dispatch({ type: actionTypes.FETCH_GENDER_START })
             let res = await getAllCodeService("POSITION");
             if (res && res.errCode === 0) {
                 dispatch(fetchPositionSuccess(res.data))
@@ -67,7 +66,6 @@ export const fetchPositionStart = () => {
 export const fetchRoleStart = () => {
     return async (dispatch, getState) => {
         try {
-            dispatch({ type: actionTypes.FETCH_GENDER_START })
             let res = await getAllCodeService("ROLE");
             if (res && res.errCode === 0) {
                 dispatch(fetchRoleSuccess(res.data))
