@@ -30,50 +30,31 @@ let createClinic = (data) => {
         }
     })
 }
-let getAllClinic = (data) => {
+let getAllClinic = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (data === 'ALL') {
-                let res = await db.Clinic.findAll();
-                if (!res) {
-                    resolve({
-                        errCode: 0,
-                        data: [],
-                    })
-                } else {
-                    resolve({
-                        errCode: 0,
-                        data: res,
-                    })
-                }
-            };
-            if (data && data !== 'ALL') {
-                let res = await db.Clinic.findOne({
-                    where: { id: data },
+            let data = await db.Clinic.findAll();
+            if (data && data.length > 0) {
+                data.map(item => {
+                    item.image = new Buffer(item.image, 'base64').toString('binary');
+                    return item;
                 })
-                if (!res) {
-                    resolve({
-                        errCode: 0,
-                        data: [],
-                    })
-                } else {
-                    resolve({
-                        errCode: 0,
-                        data: res,
-                    })
-                }
-            }
 
+            }
+            resolve({
+                errCode: 0,
+                errMessage: 'Ok',
+                data,
+            });
+        } catch (e) {
+            reject(e);
         }
-        catch (e) {
-            reject(e)
-        }
-    })
+    });
 }
-let getDetailByClinicId = (clinicId) => {
+let getDetailClinicById = (inputId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!clinicId) {
+            if (!inputId) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing parameter',
@@ -81,26 +62,27 @@ let getDetailByClinicId = (clinicId) => {
             }
             else {
 
-                let res = await db.Doctor_infor.findAll({
+                let data = await db.Clinic.findOne({
                     where: {
-                        clinicId: clinicId
+                        id: inputId
                     },
-                    attributes: ['doctorId'],
+                    attributes: ['name', 'address', 'descriptionHTML', 'descriptionMarkdown'],
                 })
-                if (!res) {
-                    resolve({
-                        errCode: 0,
-                        data: [],
+                if (data) {
+                    let doctorClinic = [];
+                    doctorClinic = await db.Doctor_Infor.findAll({
+                        where: { clinicId: inputId },
+                        attributes: ['doctorId', 'provinceId'],
                     })
-                } else {
-                    resolve({
-                        errCode: 0,
-                        data: res,
-                    })
-                }
+                    data.doctorClinic = doctorClinic;
+                } else data = {}
+
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Ok',
+                    data
+                })
             }
-
-
         }
         catch (e) {
             reject(e)
@@ -111,5 +93,5 @@ let getDetailByClinicId = (clinicId) => {
 module.exports = {
     createClinic: createClinic,
     getAllClinic: getAllClinic,
-    getDetailByClinicId: getDetailByClinicId,
+    getDetailClinicById: getDetailClinicById,
 }
