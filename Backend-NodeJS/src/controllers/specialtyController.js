@@ -40,6 +40,7 @@ let getDetailSpecialtyById = async (req, res) => {
         });
     }
 };
+
 module.exports = {
     createSpecialty: createSpecialty,
     getAllSpecialty: getAllSpecialty,
