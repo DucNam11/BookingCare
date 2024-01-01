@@ -303,15 +303,15 @@ let getScheduleByDate = (doctorId, date) => {
 let getExtraInforDoctorById = (inputId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!idInput) {
+            if (!inputId) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters"
                 })
             } else {
-                let data = await db.User.findOne({
+                let data = await db.Doctor_Infor.findOne({
                     where: {
-                        id: inputId
+                        doctorId: inputId
                     },
 
                     attributes: {
