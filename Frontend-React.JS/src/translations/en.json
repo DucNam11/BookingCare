@@ -9,7 +9,9 @@
         "fee": "Checkup package",
         "check-health": "General health check",
         "support": "Support",
-        "welcome": "Welcome, "
+        "welcome": "Welcome, ",
+        "login": "Log in",
+        "loguot": "Log uot"
     },
     "banner": {
         "title1": "MEDICAL PLATFORM",
@@ -37,7 +39,8 @@
         },
         "doctor": {
             "manage-schedule": "Manage doctor's schedule",
-            "manage-patient": "Manage doctor's patient"
+            "manage-patient": "Manage doctor's patient",
+            "manage-patient-history": "Manage history"
         }
     },
     "manage-user": {

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import './HomeHeader'
-import './HomeHeader.scss'
+import * as actions from '../../store/actions';
+import './HomeHeader';
+import './HomeHeader.scss';
 import logo from '../../assets/images/logo.svg';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../utils';
@@ -58,6 +59,9 @@ class HomeHeader extends Component {
                             <div className={language === LANGUAGES.EN ? 'language-en active' : 'language-en'}>
                                 <span onClick={() => this.changeLanguage(LANGUAGES.EN)}>EN</span>
                             </div>
+                            {/* <div className='login'>
+                                <button onClick={() => this.changeLanguage(LANGUAGES.EN)}><FormattedMessage id="homeheader.login"></FormattedMessage></button>
+                            </div> */}
 
                         </div>
                     </div>
@@ -120,7 +124,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        changeLanguageAppRedux: (language) => dispatch(changeLanguageApp(language))
+        changeLanguageAppRedux: (language) => dispatch(changeLanguageApp(language)),
+        processLogout: () => dispatch(actions.processLogout()),
     };
 };
 

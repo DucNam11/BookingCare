@@ -40,12 +40,16 @@ let postBookAppointment = (data) => {
                         firstName: data.fullName,
                     },
                 });
-
                 console.log(user[0])
 
                 if (user && user[0]) {
                     await db.Booking.findOrCreate({
-                        where: { patientId: user[0].id },
+                        where: {
+                            patientId: user[0].id,
+                            doctorId: data.doctorId,
+                            date: data.date,
+                            timeType: data.timeType
+                        },
                         defaults: {
                             statusId: 'S1',
                             doctorId: data.doctorId,
@@ -56,6 +60,7 @@ let postBookAppointment = (data) => {
                         }
                     })
                 }
+
 
 
                 resolve({
@@ -89,12 +94,31 @@ let postVerifyAppointment = (data) => {
                     raw: false
                 })
                 if (appointment) {
-                    appointment.statusId = 'S2';
-                    await appointment.save();
-                    resolve({
-                        errCode: 0,
-                        errMessage: "Update the appointment succeed!"
+                    let schedules = await db.Schedule.findOne({
+                        where: {
+                            doctorId: appointment.doctorId,
+                            timeType: appointment.timeType,
+                            date: appointment.date
+                        },
+                        raw: false
                     })
+                    if (schedules) {
+                        await db.Schedule.destroy({
+                            where: {
+                                doctorId: schedules.doctorId,
+                                timeType: schedules.timeType,
+                                date: schedules.date
+                            }
+                        });
+                        appointment.statusId = 'S2';
+                        await appointment.save();
+                        resolve({
+                            errCode: 0,
+                            errMessage: "Update the appointment succeed!"
+                        })
+
+                    }
+
                 }
                 else {
                     resolve({

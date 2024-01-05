@@ -65,6 +65,11 @@ export const doctorMenu = [
                 name: 'menu.doctor.manage-patient', link: '/doctor/manage-patient'
 
             },
+            { //quản lý lịch sử khám bệnh
+
+                name: 'menu.doctor.manage-patient-history', link: '/doctor/manage-patient-history'
+
+            },
         ]
     }
 

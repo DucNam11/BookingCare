@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { FormattedMessage } from 'react-intl';
-import './ManagePatient.scss';
+import './ManageHistory.scss';
 import DatePicker from '../../../components/Input/DatePicker';
-import { getAllPatientForDoctor, postSendRemedy } from '../../../services/userService';
+import { getAllPatientHistoryForDoctor, postSendRemedy } from '../../../services/userService';
 import moment from 'moment';
 import { LANGUAGES } from '../../../utils';
 import RemedyModal from './RemedyModal';
 import { toast } from 'react-toastify';
 import LoadingOverlay from 'react-loading-overlay';
 
-class ManagePatient extends Component {
+class ManageHistory extends Component {
 
     constructor(props) {
         super(props);
@@ -33,7 +33,7 @@ class ManagePatient extends Component {
         let { user } = this.props;
         let { currentDate } = this.state;
         let formatedDate = new Date(currentDate).getTime();
-        let res = await getAllPatientForDoctor({
+        let res = await getAllPatientHistoryForDoctor({
             doctorId: user.id,
             date: formatedDate
         })
@@ -120,6 +120,7 @@ class ManagePatient extends Component {
 
         let { dataPatient, isOpenRemedyModal, dataModal } = this.state;
         let { language } = this.props;
+        console.log(dataPatient)
         return (
             <>
 
@@ -129,7 +130,7 @@ class ManagePatient extends Component {
                     text='Loading...'>
                     <div className='manage-patient-container'>
                         <div className='m-p-title'>
-                            Quản lý bệnh nhân khám bệnh
+                            Quản lý Lịch sử khám bệnh
                         </div>
                         <div className='manage-patient-body row'>
                             <div className='col-4 form-group'>
@@ -149,7 +150,7 @@ class ManagePatient extends Component {
                                             <th>Họ và tên</th>
                                             <th>Địa chỉ</th>
                                             <th>Giới tính</th>
-                                            <th>Actions</th>
+
                                         </tr>
                                         {dataPatient && dataPatient.length > 0 ?
                                             dataPatient.map((item, index) => {
@@ -162,12 +163,6 @@ class ManagePatient extends Component {
                                                         <td>{item.patientData.firstName}</td>
                                                         <td>{item.patientData.address}</td>
                                                         <td>{gender}</td>
-                                                        <td>
-                                                            <button className='mp-btn-confirm'
-                                                                onClick={() => this.handleBtnConfirm(item)}>
-                                                                Trả kết quả
-                                                            </button>
-                                                        </td>
                                                     </tr>
 
                                                 )
@@ -212,4 +207,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManagePatient);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageHistory);
