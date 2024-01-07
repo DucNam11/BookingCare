@@ -1,19 +1,18 @@
 {
   "name": "nodejs",
   "version": "1.0.0",
-  "description": "backend nodejs hoiDanIT",
+  "description": "backend nodejs booking",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec babel-node src/server.js"
+    "start": "nodemon --exec ./node_modules/.bin/babel-node src/server.js"
   },
   "keywords": [
     "fullstack",
     "nodejs",
-    "express",
-    "hoiDanIT"
+    "express"
   ],
-  "author": "Eric HoiDanIT",
+  "author": "sam",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -23,16 +22,22 @@
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
     "mysql2": "^2.2.5",
-    "nodemailer": "6.6.3",
+    "nodemailer": "^6.6.3",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "process": "^0.11.10",
     "sequelize": "^6.6.2",
-    "uuid": "8.3.2"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/node": "^7.12.10",
-    "@babel/preset-env": "^7.23.2",
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.7",
+    "@babel/node": "^7.22.19",
+    "@babel/preset-env": "^7.23.7",
     "nodemon": "^2.0.7",
-    "sequelize-cli": "^6.6.1"
+    "sequelize-cli": "^6.2.0"
   }
 }

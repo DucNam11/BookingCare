@@ -10,13 +10,18 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
+            // define association here
             Allcode.hasMany(models.User, { foreignKey: 'positionId', as: 'positionData' })
             Allcode.hasMany(models.User, { foreignKey: 'gender', as: 'genderData' })
             Allcode.hasMany(models.Schedule, { foreignKey: 'timeType', as: 'timeTypeData' })
 
-            Allcode.hasMany(models.Doctor_Infor, { foreignKey: 'priceId', as: 'priceData' })
-            Allcode.hasMany(models.Doctor_Infor, { foreignKey: 'paymentId', as: 'paymentData' })
-            Allcode.hasMany(models.Doctor_Infor, { foreignKey: 'provinceId', as: 'provinceData' })
+            Allcode.hasMany(models.Doctor_Info, { foreignKey: 'priceId', as: 'priceIdTypeData' })
+            Allcode.hasMany(models.Doctor_Info, { foreignKey: 'paymentId', as: 'paymentIdTypeData' })
+            Allcode.hasMany(models.Doctor_Info, { foreignKey: 'provinceId', as: 'provinceIdTypeData' })
+
+            Allcode.hasMany(models.Parkages, { foreignKey: 'priceId', as: 'priceIdData' })
+            Allcode.hasMany(models.Parkages, { foreignKey: 'categoryId', as: 'categoryIdData' })
+            Allcode.hasMany(models.Parkages, { foreignKey: 'provinceId', as: 'provinceIdData' })
 
             Allcode.hasMany(models.Booking, { foreignKey: 'timeType', as: 'timeTypeDataPatient' })
         }
@@ -26,7 +31,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         valueEn: DataTypes.STRING,
         valueVi: DataTypes.STRING,
-
     }, {
         sequelize,
         modelName: 'Allcode',

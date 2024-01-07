@@ -12,13 +12,12 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
         }
-    }
+    };
     History.init({
         patientId: DataTypes.INTEGER,
         doctorId: DataTypes.INTEGER,
         description: DataTypes.TEXT,
-        files: DataTypes.TEXT,
-
+        image: DataTypes.TEXT,
     }, {
         sequelize,
         modelName: 'History',

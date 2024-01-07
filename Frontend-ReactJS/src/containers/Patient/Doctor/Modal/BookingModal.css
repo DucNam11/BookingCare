@@ -1,0 +1,11 @@
+.booking-modal-container .modal-header button {
+  border: none;
+  background-color: transparent !important;
+  font-size: 35px;
+}
+.booking-modal-container .booking-modal-body {
+  height: 100%;
+  padding: 15px;
+}
+
+/*# sourceMappingURL=BookingModal.css.map */

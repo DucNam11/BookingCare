@@ -1,128 +1,110 @@
-require('dotenv').config();
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer'
+require('dotenv').config()
 
-
-let sendSimpleEmail = async (dataSend) => {
+// async.await is not allowed in global scope, must use a wrapper
+let sendEmailBooking = async (dataSend) => {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
+        port: 587,
+        secure: false, // true for 465, false for other ports
         auth: {
-            user: process.env.EMAIL_APP,
-            pass: process.env.EMAIL_APP_PASSWORD,
+            user: process.env.EMAIL_APP, // generated ethereal user
+            pass: process.env.APP_APP_PASSWORD, // generated ethereal password
         },
     });
-
     let info = await transporter.sendMail({
-        from: '"Hello " <danletuan03@gmail.com>', // sender address
-        to: dataSend.reciverEmail, // list of receivers
-        subject: "Đặt lịch khám bệnh", // Subject line
-        html: getBodyHTMLEmail(dataSend),
+        from: '"Booking Health Care 👻" <danletuan03@gmail.com>', // sender address
+        to: dataSend.email, // list of receivers
+        subject: "Thông tin đặt lịch khám bệnh | Info about booking appointment ✔", // Subject line
+        text: "Hello world?", // plain text body
+        html: getBodyHTMEmail(dataSend) // html body
     });
-
 }
-
-let getBodyHTMLEmail = (dataSend) => {
+let getBodyHTMEmail = (dataSend) => {
     let result = ''
     if (dataSend.language === 'vi') {
         result =
             `
-        <h3>Xin chào ${dataSend.patientName}!</h3>
-        <p>Bạn nhận được Email này vì đã đặt lịch khám bệnh online </p> 
-        <p>Thông tin đặt lịch khám bệnh</p>
-        <div><b>Thời gian: ${dataSend.time}</b></div>
-        <div><b>Bác sĩ: ${dataSend.doctorName}</b></div>
-        <p>Nếu các thông tin trên là đúng vui lòng click vào đường link sau để xác nhận</p>
-        <div><a href=${dataSend.redirectLink} target="_blank">Click here</a></div>
+        <b>Xin chào ${dataSend.patientName}?</b>
+        <p>Bạn nhận được Email này vì đã đặt lịch khám bệnh online tai Booking health care</p>
+        <p> Thông tin đặt lịch khám bệnh </p>
+        <div><p>Thời gian: ${dataSend.time} </p></div>
+        <div><p>Bác sĩ : ${dataSend.doctorName} </p></div>
+        <a href=${dataSend.redirectlink} target="_blank" >Click here<a/>
+        <div><b>Chân Thành cảm ơn</b></div>        
         `
-
     }
     if (dataSend.language === 'en') {
         result =
             `
-        <h3>Dear ${dataSend.patientName}!</h3>
-        <p>You received this Email because you booked an online medical appointment</p> 
-        <p>Information on scheduling medical examinations:</p>
-        <div><b>Time: ${dataSend.time}</b></div>
-        <div><b>Doctor: ${dataSend.doctorName}</b></div>
-        <p>If the above information is correct, please click on the following link to confirm</p>
-        <div><a href=${dataSend.redirectLink} target="_blank">Click here</a></div>
+        <b>Dear ${dataSend.patientName}?</b>
+        <p>you receive this Email because you booked our online Medical Appointment</p>
+        <p> Information about schedule appointment </p>
+        <div><p>Time : ${dataSend.time} </p></div>
+        <div><p>Doctor : ${dataSend.doctorName} </p></div>
+        <a href=${dataSend.redirectlink} target="_blank" >Click here<a/>
+        <div><b>Sincerely Thanks !</b></div>        
         `
-
     }
-    return result;
+    return result
 }
-
-let getBodyHTMLEmailRemedy = (dataSend) => {
+let getBodyHTMEmailRemedy = (dataSend) => {
     let result = ''
     if (dataSend.language === 'vi') {
         result =
             `
-        <h3>Xin chào ${dataSend.patientName}!</h3>
-        <p>Bạn nhận được Email này vì đã khám bệnh xong </p> 
-        <p>Thông tin bệnh tình và đơn thuốc được gửi trong file đính kèm.</p>
-        
-        <p>Xin chân thành cảm ơn!</p>
+        <b>Xin chào ${dataSend.patientName}?</b>
+        <p>Càm ơn vì đã đặt lịch khám bệnh online tai Booking health care</p>
+        <p> Thông tin hóa đơn đặt lịch khám bệnh </p>
+        <div><b>Chân Thành cảm ơn</b></div>        
         `
-
     }
     if (dataSend.language === 'en') {
         result =
             `
-        <h3>Dear ${dataSend.patientName}!</h3>
-        <p>You received this Email because you booked an online medical appointment</p> 
-        <p>Information on scheduling medical examinations:</p>
-        
+        <b>Dear ${dataSend.patientName}?</b>
+        <p>thanks for booking our online Medical Appointment</p>
+        <p> Information about Remedy appointment </p>
+        <div><b>Sincerely Thanks !</b></div>        
         `
-
     }
-    return result;
-
+    return result
 }
-
 let sendAttachment = async (dataSend) => {
     return new Promise(async (resolve, reject) => {
-
-
         try {
-
             let transporter = nodemailer.createTransport({
                 host: "smtp.gmail.com",
-                port: 465,
-                secure: true,
+                port: 587,
+                secure: false, // true for 465, false for other ports
                 auth: {
-                    user: process.env.EMAIL_APP,
-                    pass: process.env.EMAIL_APP_PASSWORD,
+                    user: process.env.EMAIL_APP, // generated ethereal user
+                    pass: process.env.APP_APP_PASSWORD, // generated ethereal password
                 },
             });
-
             let info = await transporter.sendMail({
-                from: '"Hello " <danletuan03@gmail.com>', // sender address
+                from: '"Booking Health Care 👻" <danletuan03@gmail.com>', // sender address
                 to: dataSend.email, // list of receivers
-                subject: "Kết quả khám bệnh", // Subject line
-                html: getBodyHTMLEmailRemedy(dataSend),
+                subject: "Kết quả đặt lệnh khám bệnh ✔", // Subject line
+                html: getBodyHTMEmailRemedy(dataSend), // html body
                 attachments: [
                     {
                         filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.png`,
-                        content: dataSend.imgBase64.split('base64,')[1],
+                        content: dataSend.imageBase64.split("base64,")[1],
                         encoding: 'base64'
                     }
-                ],
+                ]
             });
-            resolve()
+            resolve(true)
 
-
-        } catch (e) {
-            reject(e)
+        } catch (error) {
+            reject(error)
         }
     })
+
 }
 
-
-
-
-
 module.exports = {
-    sendSimpleEmail: sendSimpleEmail,
+    sendEmailBooking: sendEmailBooking,
     sendAttachment: sendAttachment
 }

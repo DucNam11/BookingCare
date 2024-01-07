@@ -1,0 +1,174 @@
+.section {
+  height: 360px;
+}
+.section.section-specialty {
+  background: #f5f5f5;
+}
+.section.section-outstanding-doctor {
+  background: #f5f5f5;
+}
+.section.section-about {
+  background: #f5f5f5;
+  height: 400px !important;
+}
+.section.section-handbook {
+  background: white;
+  height: 400px !important;
+}
+.section .section-content {
+  display: flex;
+  flex-direction: column;
+}
+.section .section-content .slider-header {
+  margin: 20px 100px;
+}
+.section .section-content .slider-header .title-section {
+  font-size: 22px;
+  font-weight: 600;
+}
+.section .section-content .slider-header .btn-section {
+  float: right;
+  display: block;
+  margin-right: 10px;
+  padding: 10px 15px;
+  border: none;
+  outline: none;
+  border-radius: 5%;
+  background: grey;
+  text-transform: uppercase;
+}
+.section .section-content .slider-header .btn-section:hover {
+  background: wheat;
+}
+.section .section-content .slider-content {
+  margin: 0 100px;
+  padding-top: 30px;
+}
+.section .section-content .slider-content .section-customize {
+  cursor: pointer;
+}
+.section .section-content .slider-content .section-customize:hover {
+  color: blue;
+}
+.section .section-content .slider-content .section-customize .bg-img {
+  height: 150px;
+  width: 278px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #eee;
+}
+.section .section-content .slider-content .section-customize .bg-img.img-specialty {
+  height: 150px;
+  width: 278px;
+}
+.section .section-content .slider-content .section-customize .bg-img.img-handbook {
+  height: 150px;
+  width: 278px;
+}
+.section .section-content .slider-content .section-customize .bg-img.img-outstandingdoctor {
+  height: 120px;
+  width: 120px;
+  border-radius: 50%;
+}
+
+.slick-prev {
+  border-radius: 50%;
+  height: 50px !important;
+  width: 50px !important;
+  left: -30px !important;
+  font-size: 45px !important;
+  background-color: #c4c1c1 !important;
+  z-index: 10 !important;
+}
+.slick-prev:hover {
+  background-color: grey !important;
+}
+
+.slick-next {
+  border-radius: 50%;
+  height: 50px !important;
+  width: 50px !important;
+  right: -18px !important;
+  font-size: 45px !important;
+  background-color: #c4c1c1 !important;
+  z-index: 10 !important;
+}
+.slick-next:hover {
+  background-color: grey !important;
+}
+
+.section-outstanding-doctor .img-contain {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.section-outstanding-doctor .section-customize {
+  padding: 5px;
+}
+.section-outstanding-doctor .section-customize .border-custom {
+  border: 1px solid grey;
+  padding: 15px;
+}
+.section-outstanding-doctor .section-customize .border-custom .position {
+  font-size: 18px;
+}
+
+.section-handbook .img-contain {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.section-handbook .section-customize {
+  padding: 5px;
+}
+.section-handbook .section-customize .handbook-container {
+  display: flex;
+  justify-content: center;
+}
+.section-handbook .section-customize .handbook-container .img-contain {
+  margin-right: 10px;
+}
+.section-handbook .section-customize .handbook-container .position-handbook {
+  margin-left: 15px;
+}
+.section-handbook .section-customize .handbook-container .position-handbook span {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+}
+.section-handbook .section-customize .border-custom {
+  border: 1px solid grey;
+  padding: 15px;
+}
+
+.home-footer {
+  height: 45px;
+  text-align: center;
+  align-content: center;
+  background-color: rgb(68, 117, 209);
+  padding: 13px 0;
+}
+
+.section-about {
+  padding: 0 100px;
+}
+.section-about .section-about-header {
+  padding: 10px 0;
+  font-weight: 600;
+  font-size: 22px;
+}
+.section-about .section-about-content {
+  display: flex;
+  width: 100%;
+}
+.section-about .section-about-content .content-left {
+  width: 60%;
+}
+.section-about .section-about-content .content-right {
+  width: 40%;
+  background-image: url("../../assets/images/Capture.PNG");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/*# sourceMappingURL=HomePage.css.map */
