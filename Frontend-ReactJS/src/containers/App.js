@@ -1,112 +1,109 @@
-import React, {Component, Fragment} from 'react';
-import {connect} from 'react-redux';
-import {Route, Switch} from 'react-router-dom';
-import {ConnectedRouter as Router} from 'connected-react-router';
-import {history} from '../redux'
-import {ToastContainer} from 'react-toastify';
-import {userIsAuthenticated, userIsNotAuthenticated} from '../hoc/authentication';
-import {path} from '../utils'
-import Home from '../routes/Home';
-import Doctor from '../routes/Doctor'
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+
+import { history } from '../redux';
+import { userIsAuthenticated, userIsNotAuthenticated } from '../hoc/authentication';
+import { path } from '../utils';
 import Login from './Auth/Login';
 import System from '../routes/System';
-// import { CustomToastCloseButton } from '../components/CustomToast';
-import HomePage from './HomePage/HomePage.js'
+import 'react-toastify/dist/ReactToastify.css';
+import Doctor from '../routes/Doctor';
+import { ToastContainer } from 'react-toastify';
 import CustomScrollbars from '../components/CustomScrollbars';
-import DetailDoctor from './Patient/Doctor/DetailDoctor';
-import VerifyEmailBooking from './Patient/VerifyEmailBooking';
-import DetailSpecialty from './Patient/Specialty/DetailSpecialty';
-import DetailClinic from './Patient/Clinic/DetailClinic';
-import ListingSpecialty from './Patient/Specialty/ListingSpecialty';
-import ListingClinic from './Patient/Clinic/ListingClinic';
-import ListingDoctor from './Patient/Doctor/ListingDoctor';
-import DetailHandbook from './Patient/Handbook/DetailHandbook';
-import ListingHandbook from './Patient/Handbook/ListingHandbook';
-import ListingParkage from './Patient/Parkage/ListingParkage';
-import ParkageDetail from './Patient/Parkage/ParkageDetail';
-import VerifyEmailBookingParkage from './Patient/Parkage/VerifyEmailBookingParkage';
-import SignUp from './System/Admin/SignUp';
-import ConfirmModal from "../components/ConfirmModal";
+
+import * as actions from '../store/actions';
+
+import HomePage from './HomePage/HomePage';
+
+import DetailDoctor from '../containers/Patient/Doctor/DetailDoctor';
+import DetailSpecialty from '../containers/Patient/Specialty/DetailSpecialty';
+import DetailClinic from '../containers/Patient/Clinic/DetailClinic';
+import DetailHandbook from '../containers/Patient/Handbook/DetailHandbook';
+import DetailNews from '../containers/Patient/News/DetailNews';
+import DetailUser from '../containers/Patient/DetailUser/DetailUser';
+import VerifyBooking from '../containers/Patient/VerifyBooking';
+
+import withLayoutHome from '../hoc/withLayoutHome';
 
 class App extends Component {
-
-    handlePersistorState = () => {
-        const {persistor} = this.props;
-        let {bootstrapped} = persistor.getState();
-        if (bootstrapped) {
-            if (this.props.onBeforeLift) {
-                Promise.resolve(this.props.onBeforeLift())
-                    .then(() => this.setState({bootstrapped: true}))
-                    .catch(() => this.setState({bootstrapped: true}));
-            } else {
-                this.setState({bootstrapped: true});
-            }
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+    async componentDidMount() {
+        await this.props.getAllSpecialtyRedux();
+        await this.props.getAllClinicRedux('true');
+        await this.props.getHandbookRedux();
+    }
+    async componentDidUpdate(prevProps) {
+        if (prevProps.listDataSpecialtyRedux !== this.props.listDataSpecialtyRedux) {
+            this.setState({
+                listSpecialty: this.props.listDataSpecialtyRedux,
+            });
         }
-    };
-
-    componentDidMount() {
-        this.handlePersistorState();
     }
 
+    toggleModel = (modal) => {
+        this.setState({
+            [modal]: !this.state[modal],
+        });
+    };
     render() {
         return (
             <Fragment>
-                <Router history={history}>
-                    <div className="main-container">
-                        <ConfirmModal/>
-                        <div className="content-container">
-                            <CustomScrollbars style={{height: '100vh', width: '100%'}}>
+                <div className="main-container">
+                    <div className="content-container">
+                        <CustomScrollbars style={{ width: '100%', height: '100vh' }}>
+                            <Router history={history}>
                                 <Switch>
-                                    <Route path={path.HOME} exact component={(Home)}/>
-                                    <Route path={path.HOMEPAGE} component={(HomePage)}/>
-                                    <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)}/>
-                                    <Route path={path.SYSTEM} component={userIsAuthenticated(System)}/>
-                                    <Route path={path.SIGN_UP} component={SignUp}/>
+                                    <Route path={path.HOME} exact component={withLayoutHome(HomePage)} />
+                                    <Route path={path.HOMEPAGE} exact component={withLayoutHome(HomePage)} />
 
-                                    <Route path={'/doctor/'} component={userIsAuthenticated(Doctor)}/>
-                                    <Route path={path.DETAIL_DOCTOR} component={DetailDoctor}/>
-                                    <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty}/>
-                                    <Route path={path.DETAIL_CLINIC} component={DetailClinic}/>
-                                    <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmailBooking}/>
-                                    <Route path={path.LISTING_SPECIALTY} component={ListingSpecialty}/>
-                                    <Route path={path.LISTING_CLINIC} component={ListingClinic}/>
-                                    <Route path={path.LISTING_DOCTOR} component={ListingDoctor}/>
-                                    <Route path={path.DETAIL_HANDBOOK} component={DetailHandbook}/>
-                                    <Route path={path.LISTING_HANDBOOK} component={ListingHandbook}/>
-                                    <Route path={path.LISTING_PARKAGE} component={ListingParkage}/>
-                                    <Route path={path.DETAIL_PARKAGE} component={ParkageDetail}/>
-                                    <Route path={path.VERIFY_EMAIL_BOOKING_PARKAGE}
-                                           component={VerifyEmailBookingParkage}/>
+                                    <Route path={path.SYSTEM} component={userIsAuthenticated(System)} />
+                                    <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
+                                    <Route path={path.DOCTOR} component={userIsAuthenticated(Doctor)} />
+
+                                    <Route path={path.DETAIL_DOCTOR} component={withLayoutHome(DetailDoctor)} />
+                                    <Route path={path.DETAIL_SPECIALTY} component={withLayoutHome(DetailSpecialty)} />
+                                    <Route path={path.DETAIL_CLINIC} component={withLayoutHome(DetailClinic)} />
+                                    <Route path={path.DETAIL_HANDBOOK} component={withLayoutHome(DetailHandbook)} />
+                                    <Route path={path.DETAIL_NEWS} component={withLayoutHome(DetailNews)} />
+                                    <Route path={path.DETAIL_USER} component={withLayoutHome(DetailUser)} />
+                                    <Route path={path.VERIFY_BOOING} component={withLayoutHome(VerifyBooking)} />
                                 </Switch>
-                            </CustomScrollbars>
-                        </div>
-
-                        <ToastContainer
-                            position='bottom-right'
-                            autoClose={5000}
-                            hideProgressBar={false}
-                            newestOnTop={false}
-                            rtl={false}
-                            pauseOnFocusLoss
-                            draggable
-                            pauseOnHover
-                        />
+                            </Router>
+                        </CustomScrollbars>
                     </div>
-                </Router>
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                    />
+                </div>
             </Fragment>
-        )
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        started: state.app.started,
-        isLoggedIn: state.user.isLoggedIn
+        userInfo: state.user.userInfo,
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getAllSpecialtyRedux: () => dispatch(actions.getAllSpecialty()),
+        getHandbookRedux: () => dispatch(actions.getHandbookRedux()),
+        getAllClinicRedux: (isGetImage) => dispatch(actions.getAllClinicRedux(isGetImage)),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

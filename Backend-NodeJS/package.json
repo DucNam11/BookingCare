@@ -1,43 +1,48 @@
 {
-  "name": "nodejs",
-  "version": "1.0.0",
-  "description": "backend nodejs booking",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec ./node_modules/.bin/babel-node src/server.js"
-  },
-  "keywords": [
-    "fullstack",
-    "nodejs",
-    "express"
-  ],
-  "author": "sam",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.0.1",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "ejs": "^3.1.5",
-    "express": "^4.17.1",
-    "lodash": "^4.17.21",
-    "moment": "^2.29.1",
-    "mysql2": "^2.2.5",
-    "nodemailer": "^6.6.3",
-    "pg": "^8.7.1",
-    "pg-hstore": "^2.3.4",
-    "process": "^0.11.10",
-    "sequelize": "^6.6.2",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.23.4",
-    "@babel/core": "^7.23.7",
-    "@babel/node": "^7.22.19",
-    "@babel/preset-env": "^7.23.7",
-    "nodemon": "^2.0.7",
-    "sequelize-cli": "^6.2.0"
-  }
+    "name": "nodejs",
+    "version": "1.0.0",
+    "description": "backend nodejs",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon --exec ./node_modules/.bin/babel-node src/server.js"
+    },
+    "keywords": [
+        "fullstack",
+        "nodejs",
+        "express"
+    ],
+    "author": "nguyen thang",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.0.1",
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "ejs": "^3.1.5",
+        "exact": "^0.8.0",
+        "express": "^4.17.1",
+        "http-errors": "^2.0.0",
+        "jsonwebtoken": "^8.5.1",
+        "jwt-decode": "^3.1.2",
+        "lodash": "^4.17.21",
+        "moment": "^2.29.4",
+        "mysql2": "^2.2.5",
+        "node-cron": "^3.0.2",
+        "nodemailer": "^6.6.3",
+        "pg": "8.7.1",
+        "pg-hstore": "2.3.4",
+        "redis": "^3.1.2",
+        "sequelize": "^6.6.2",
+        "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.12.10",
+        "@babel/node": "^7.12.10",
+        "@babel/preset-env": "^7.12.10",
+        "nodemon": "^2.0.7",
+        "sequelize-cli": "^6.2.0"
+    }
 }

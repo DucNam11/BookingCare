@@ -1,86 +1,92 @@
-import specialtyService from '../services/specialtyService'
+import {
+    postSpecialtyServices,
+    getAllSpecialtyServices,
+    getSpecialtyByIdServices,
+    getDetailSpecialtyByIdServices,
+    filterAndPagingServices,
+    deleteSpecialtyByIdServices,
+} from '../services/specialtyServices';
 
-let createNewSpecialty = async (req, res) => {
+let postSpecialty = async (req, res) => {
     try {
-        let data = await specialtyService.createNewSpecialty(req.body)
-        return res.status(200).json(data)
+        let response = await postSpecialtyServices(req.body);
+        return res.status(200).json(response);
     } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from server'
-        })
+        console.log(error);
+        return res.status(402).json({
+            errorCode: 1,
+            message: 'Error from server',
+        });
     }
-}
+};
 let getAllSpecialty = async (req, res) => {
     try {
-        let data = await specialtyService.getAllSpecialty()
-        return res.status(200).json(data)
+        let response = await getAllSpecialtyServices();
+        return res.status(200).json(response);
     } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from server'
-        })
+        console.log(error);
+        return res.status(402).json({
+            errorCode: 1,
+            message: 'Error from server',
+        });
     }
-}
-let getDetailSpecialtyById = async (req, res) => {
+};
+let getSpecialtyById = async (req, res) => {
     try {
-        let data = await specialtyService.getDetailSpecialtyById(req.query.id, req.query.location)
-        return res.status(200).json(data)
+        let { id, location } = req.query;
+        location = location || 'ALL';
+        let response = await getSpecialtyByIdServices(id, location);
+        return res.status(200).json(response);
     } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "Error from Server"
-        })
+        console.log(error);
+        return res.status(402).json({
+            errorCode: 1,
+            message: 'Error from server',
+        });
     }
-}
-let deleteSpecialtyById = async (req, res) => {
+};
+
+let filterAndPagingSpecialty = async (req, res) => {
     try {
-        if (!req.body.id) {
-            return res.status(200).json({
-                errCode: 1,
-                errMessage: "Missing parameterA"
-            })
-        } else {
-            let data = await specialtyService.deleteSpecialtyById(req.body.id)
-            return res.status(200).json({
-                errCode: 0,
-                errMessage: 'Delete Success'
-            })
+        let { page, limit, keyword } = req.query;
+        const offset = !page || +page <= 1 ? 0 : (+page - 1) * limit;
+        limit = +limit || 5;
+        let response = await filterAndPagingServices({ offset, limit, keyword });
+        if (response && response.errorCode === 0) return res.status(200).json(response);
+        else {
+            return res.status(400).json(response);
         }
     } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "error from server"
-        })
+        console.log(error);
+        return res.status(500).json({ errorCode: 1, message: 'Có lỗi xảy ra!' });
     }
-}
-let editSpecialtyById = async (req, res) => {
+};
+
+let deleteSpecialtyById = async (req, res) => {
     try {
-        let data = await specialtyService.editSpecialtyById(req.body)
-        return res.status(200).json(data)
+        let id = req.params.id;
+        if (!id) {
+            return res.status(200).json({
+                errorCode: 1,
+                message: 'Missing parameter',
+            });
+        } else {
+            let response = await deleteSpecialtyByIdServices(id);
+            return res.status(200).json(response);
+        }
     } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "Error from Server"
-        })
+        console.log(error);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error from server',
+        });
     }
-}
-let getAllSpecialtyById = async (req, res) => {
-    try {
-        let data = await specialtyService.getAllSpecialtyById(req.query.id)
-        return res.status(200).json(data)
-    } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "Error from server"
-        })
-    }
-}
+};
+
 module.exports = {
-    createNewSpecialty: createNewSpecialty,
-    getAllSpecialty: getAllSpecialty,
-    getDetailSpecialtyById: getDetailSpecialtyById,
-    deleteSpecialtyById: deleteSpecialtyById,
-    editSpecialtyById: editSpecialtyById,
-    getAllSpecialtyById: getAllSpecialtyById,
-}
+    postSpecialty,
+    getAllSpecialty,
+    getSpecialtyById,
+    filterAndPagingSpecialty,
+    deleteSpecialtyById,
+};

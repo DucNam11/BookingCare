@@ -1,171 +1,162 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {LANGUAGE} from '../../../utils';
-import HeaderHomePage from '../../../containers/HomePage/HeaderHomePage'
-import './DetailSpecialty.scss'
-import DoctorSchedule from '../Doctor/DoctorSchedule'
-import DoctorExtraInfo from '../Doctor/DoctorExtraInfo'
-import ProfileDoctor from '../Doctor/ProfileDoctor';
-import {getallcodeServive, getAllDetailSpecialtyById} from '../../../services/userService'
-import _ from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { LANGUAGES } from '../../../utils';
+import * as actions from '../../../store/actions';
+import { FormattedMessage } from 'react-intl';
 
+import { getSpecialtyByIdServices } from '../../../services/patientServices';
+import DetailDoctor from '../Doctor/DetailDoctor';
+import Select from 'react-select';
+import { getAllCodeServices } from '../../../services/userServices';
+
+import './DetailSpecialty.scss';
+import FooterContent from '../../HomePage/FooterContent';
 
 class DetailSpecialty extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            arrDoctors: [],
-            dataDetailSpecialty: {},
-            listProvince: []
-        }
+            introSpecialty: '',
+            backgroundImage: '',
+            nameSpecialty: '',
+            doctors: [],
+            listProvince: [],
+            specialtyId: '',
+            selectedProvinceId: '',
+            moreDetail: false,
+        };
     }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-    }
-
     async componentDidMount() {
-        if (this.props.match && this.props.match.params && this.props.match.params.id) {
-            let id = this.props.match.params.id
-            let res = await getAllDetailSpecialtyById({
-                id: id,
-                location: 'ALL'
-            })
-            let resProvince = await getallcodeServive("PROVINCE")
-            if (res && res.errCode === 0 && resProvince && resProvince.errCode === 0) {
-                let data = res.data
-                let arrDoctors = []
-                if (data && !_.isEmpty(data)) {
-                    let arr = data.doctorSpecialty
-                    if (arr && arr.length > 0) {
-                        arr.map(item => {
-                            arrDoctors.push(item.doctorId)
-                        })
-                    }
-                }
-                let dataProvince = resProvince.data
-                if (dataProvince && dataProvince.length > 0) {
-                    dataProvince.unshift({
-                        createAt: null,
-                        keyMap: 'ALL',
-                        type: "PROVINCE",
-                        valueVi: "Toàn Quốc",
-                        valueEn: "ALL"
-                    })
-                }
-                this.setState({
-                    arrDoctors: arrDoctors,
-                    listProvince: dataProvince ? dataProvince : [],
-                    dataDetailSpecialty: res.data
-                })
-            }
+        let { match } = this.props;
+        if (match && match.params && match.params.id) {
+            let specialtyId = match.params.id;
+            let responseSpecialty = await getSpecialtyByIdServices(specialtyId, 'ALL');
+            let listProvinceResponse = await getAllCodeServices('PROVINCE');
+            this.setState({
+                specialtyId: specialtyId,
+                introSpecialty: responseSpecialty.data.descriptionHtml,
+                backgroundImage: responseSpecialty.data.image,
+                nameSpecialty: responseSpecialty.data.name,
+                doctors: responseSpecialty.data.doctor_infor,
+                listProvince: this.buildInputSelect(listProvinceResponse.data),
+            });
+        }
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.languageRedux !== this.props.languageRedux) {
+            this.setState({
+                listProvince: this.buildInputSelect(this.state.listProvince),
+            });
         }
     }
 
-    handleOnchangeSelect = async (event) => {
-        if (this.props.match && this.props.match.params && this.props.match.params.id) {
-            let id = this.props.match.params.id
-            let location = event.target.value
-            let res = await getAllDetailSpecialtyById({
-                id: id,
-                location: location
-            })
-            if (res && res.errCode === 0) {
-                let data = res.data
-                let arrDoctors = []
-                if (data && !_.isEmpty(data)) {
-                    let arr = data.doctorSpecialty
-                    if (arr && arr.length > 0) {
-                        arr.map(item => {
-                            arrDoctors.push(item.doctorId)
-                        })
-                    }
-                }
-                this.setState({
-                    arrDoctors: arrDoctors,
-                    dataDetailSpecialty: res.data
-                })
-            }
-        }
-    }
+    buildInputSelect = (data) => {
+        let result = [];
+        data.unshift({ keyMap: 'ALL', valueVi: 'Toàn quốc', valueEn: 'Nationwide' });
+        if (data && data.length > 0) {
+            result = data.map((item, index) => {
+                let object = {};
 
+                object.label = this.props.languageRedux === LANGUAGES.VI ? item.valueVi : item.valueEn;
+                object.value = item.keyMap;
+
+                return object;
+            });
+        }
+
+        return result;
+    };
+
+    handleChange = async (selectedProvince) => {
+        let { specialtyId } = this.state;
+        let provinceId = selectedProvince.value;
+        if (specialtyId) {
+            let responseSpecialty = await getSpecialtyByIdServices(specialtyId, provinceId);
+            this.setState({
+                selectedProvinceId: provinceId,
+                doctors: responseSpecialty.data.doctor_infor,
+            });
+        }
+    };
+
+    handleClickMore = () => {
+        this.setState({
+            moreDetail: !this.state.moreDetail,
+        });
+    };
     render() {
-        let {arrDoctors, listProvince, dataDetailSpecialty} = this.state
-        let {language} = this.props
-        return (
-            <>
-                <div className='detail-specialty-container'>
-                    <HeaderHomePage/>
-                    <div className='detail-specialty-body'>
-                        <div className='description-specialty'>
-                            {dataDetailSpecialty && !_.isEmpty(dataDetailSpecialty)
-                                && <div dangerouslySetInnerHTML={{__html: dataDetailSpecialty.descriptionHTML}}>
-                                </div>
-                            }
-                        </div>
-                        <div className='search-sp-doctor'>
-                            <select onChange={(event) => {
-                                this.handleOnchangeSelect(event)
-                            }}>
-                                {
-                                    listProvince && listProvince.length > 0 &&
-                                    listProvince.map((item, index) => {
-                                        return (
-                                            <option key={index} value={item.keyMap}>
-                                                {language === LANGUAGE.VI ? item.valueVi : item.valueEn}
-                                            </option>
-                                        )
-                                    })
-                                }
-                            </select>
-                        </div>
-                        {arrDoctors && arrDoctors.length > 0 &&
-                            arrDoctors.map((item, index) => {
-                                return (
-                                    <div className='each-doctor' key={index}>
-                                        <div className='dt-content-left'>
-                                            <div className='profile-doctor'>
-                                                <ProfileDoctor
-                                                    doctorId={item}
-                                                    isShowDescriptionDoctor={true}
-                                                    isShowLinkDetail={true}
-                                                    isShowPrice={false}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className='dt-content-right'>
-                                            <div className='doctor-schedule'>
-                                                <DoctorSchedule
-                                                    doctorIdFromParent={item}
-                                                />
-                                            </div>
-                                            <div className='doctor-extra-info'>
-                                                <DoctorExtraInfo
-                                                    doctorIdFromParent={item}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            })
-                        }
+        let { introSpecialty, backgroundImage, doctors, listProvince, moreDetail } = this.state;
 
+        return (
+            <div className="detail-specialty-wrapper">
+                {/* <HomeHeader /> */}
+                <div className="detail-specialty-container">
+                    <div className="header-intro">
+                        <div className="header-image">
+                            <img src={backgroundImage} alt="img"></img>
+                        </div>
+                        <div className="header-text coverArea">
+                            <div
+                                className={!moreDetail ? `detail-specialty more-detail-specialty` : 'detail-specialty'}
+                                dangerouslySetInnerHTML={{ __html: introSpecialty }}
+                            ></div>
+                            <div className="btn-more" onClick={() => this.handleClickMore()}>
+                                {!moreDetail ? (
+                                    <FormattedMessage id="patient.doctor.more" />
+                                ) : (
+                                    <FormattedMessage id="patient.doctor.hide" />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="doctors-container coverArea">
+                        <div className="location">
+                            <div className="box-select-province">
+                                <Select
+                                    placeholder="Toàn quốc"
+                                    onChange={(e) => this.handleChange(e)}
+                                    options={listProvince}
+                                />
+                            </div>
+                        </div>
+                        <div className="doctors">
+                            {doctors &&
+                                doctors.length > 0 &&
+                                doctors.map((item) => {
+                                    return (
+                                        <div className="sec-doctor" key={item.doctorId}>
+                                            <div className="right">
+                                                <DetailDoctor
+                                                    className="item"
+                                                    doctorId={item.doctorId}
+                                                    typeStyle="specialty"
+                                                    isComponentChild
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                        </div>
+                        <FooterContent />
                     </div>
                 </div>
-            </>
-        )
-
+            </div>
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language,
+        languageRedux: state.app.language,
+        detailDoctorRedux: state.doctor.detailDoctor,
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getDetailDoctorRedux: (id) => dispatch(actions.getDetailDoctor(id)),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DetailSpecialty);

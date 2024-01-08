@@ -1,109 +1,124 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import HeaderHomePage from '../../HomePage/HeaderHomePage';
-import _ from 'lodash'
-import {getDetailClinicById} from '../../../services/userService';
-import DoctorSchedule from '../Doctor/DoctorSchedule'
-import DoctorExtraInfo from '../Doctor/DoctorExtraInfo'
-import ProfileDoctor from '../Doctor/ProfileDoctor';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../../../store/actions';
+import { getDetailClinicByIdServices } from '../../../services/patientServices';
+import { MdAddLocation } from 'react-icons/md';
+import DetailDoctor from '../../Patient/Doctor/DetailDoctor';
+import { BsLightbulbFill } from 'react-icons/bs';
 
+import './DetailClinic.scss';
+import FooterContent from '../../HomePage/FooterContent';
 
-class DetailClinic extends Component {
+class DetailSpecialty extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            arrDoctors: [],
-            dataDetailClinic: {},
+            clinicData: {},
+            doctors: [],
+        };
+    }
+    async componentDidMount() {
+        let { match } = this.props;
+        if (match && match.params && match.params.id) {
+            let clinicId = match.params.id;
+            let response = await getDetailClinicByIdServices(clinicId);
+            if (response && response.errorCode === 0) {
+                this.setState({
+                    clinicData: response.data,
+                    doctors: response.data.doctors,
+                });
+            }
         }
     }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-    }
-
-    async componentDidMount() {
-        if (this.props.match && this.props.match.params && this.props.match.params.id) {
-            let id = this.props.match.params.id
-            let res = await getDetailClinicById({
-                id: id,
-            })
-            if (res && res.errCode === 0) {
-                let data = res.data
-                let arrDoctors = []
-                if (data && !_.isEmpty(data)) {
-                    let arr = data.doctorClinic
-                    if (arr && arr.length > 0) {
-                        arr.map(item => {
-                            arrDoctors.push(item.doctorId)
-                        })
-                    }
-                }
-                this.setState({
-                    arrDoctors: arrDoctors,
-                    dataDetailClinic: res.data
-                })
-            }
+    componentDidUpdate(prevProps) {
+        if (prevProps.languageRedux !== this.props.languageRedux) {
         }
     }
 
     render() {
-        let {arrDoctors, dataDetailClinic} = this.state
+        let { clinicData, doctors } = this.state;
         return (
-            <>
-                <div className='detail-specialty-container'>
-                    <HeaderHomePage/>
-                    <div className='detail-specialty-body'>
-                        <div className='description-specialty'>
-                            {dataDetailClinic && !_.isEmpty(dataDetailClinic)
-                                && <div dangerouslySetInnerHTML={{__html: dataDetailClinic.descriptionHTML}}>
+            <div className="detail-clinic-wrapper position-loading">
+                {/* <HomeHeader /> */}
+                <div className="detail-clinic-container">
+                    <div className="detail-clinic-header">
+                        <div className="clinic-header coverArea">
+                            <div
+                                className="clinic-image"
+                                style={{ backgroundImage: `url(${clinicData.imageClinic})` }}
+                            ></div>
+                            <div className="clinic-intro">
+                                <div
+                                    className="image-logo"
+                                    style={{ backgroundImage: `url(${clinicData.imageLogo})` }}
+                                ></div>
+                                <div className="intro">
+                                    <h1>{clinicData.nameClinic}</h1>
+                                    <p>
+                                        <MdAddLocation />
+                                        <span>{clinicData.addressClinic}</span>
+                                    </p>
                                 </div>
-                            }
+                            </div>
                         </div>
-                        {arrDoctors && arrDoctors.length > 0 &&
-                            arrDoctors.map((item, index) => {
-                                return (
-                                    <div className='each-doctor' key={index}>
-                                        <div className='dt-content-left'>
-                                            <div className='profile-doctor'>
-                                                <ProfileDoctor
-                                                    doctorId={item}
-                                                    isShowDescriptionDoctor={true}
-                                                    isShowLinkDetail={true}
-                                                    isShowPrice={false}
-                                                />
+                    </div>
+                    <div className="intro-bookingCare coverArea">
+                        <div className="icon">
+                            <BsLightbulbFill />
+                        </div>
+                        <h4>
+                            BookingCare là Nền tảng Y tế chăm sóc sức khỏe toàn diện hàng đầu Việt Nam kết nối người
+                            dùng với trên 150 bệnh viện - phòng khám uy tín, hơn 1,000 bác sĩ chuyên khoa giỏi và hàng
+                            nghìn dịch vụ, sản phẩm y tế chất lượng cao.
+                        </h4>
+                    </div>
+                    <div
+                        className="detail-clinic coverArea"
+                        dangerouslySetInnerHTML={{ __html: clinicData.descriptionHtml }}
+                    ></div>
+                    {doctors.length > 0 && (
+                        <div className="doctors-container coverArea">
+                            <h4 className="title-doctors">Bác sĩ</h4>
+                            <div className="doctors">
+                                {doctors &&
+                                    doctors.length > 0 &&
+                                    doctors.map((item) => {
+                                        return (
+                                            <div className="sec-doctor" key={item.doctorId}>
+                                                <div className="right">
+                                                    <DetailDoctor
+                                                        className="item"
+                                                        doctorId={item.doctorId}
+                                                        typeStyle="specialty"
+                                                        isComponentChild
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className='dt-content-right'>
-                                            <div className='doctor-schedule'>
-                                                <DoctorSchedule
-                                                    doctorIdFromParent={item}
-                                                />
-                                            </div>
-                                            <div className='doctor-extra-info'>
-                                                <DoctorExtraInfo
-                                                    doctorIdFromParent={item}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            })
-                        }
+                                        );
+                                    })}
+                            </div>
+                        </div>
+                    )}
+                    <div className="coverArea">
+                        <FooterContent />
                     </div>
                 </div>
-            </>
-        )
+            </div>
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language,
+        languageRedux: state.app.language,
+        detailDoctorRedux: state.doctor.detailDoctor,
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getDetailDoctorRedux: (id) => dispatch(actions.getDetailDoctor(id)),
+    };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DetailClinic);
+export default connect(mapStateToProps, mapDispatchToProps)(DetailSpecialty);

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Scrollbars} from 'react-custom-scrollbars';
+import React, { Component } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 import './CustomScrollbars.scss';
 
@@ -7,11 +7,11 @@ class CustomScrollbars extends Component {
 
     ref = React.createRef();
 
-    getScrollLeft = () => {
+    getScrollLeft =()=>{
         const scrollbars = this.ref.current;
         return scrollbars.getScrollLeft();
     }
-    getScrollTop = () => {
+    getScrollTop =()=>{
         const scrollbars = this.ref.current;
         return scrollbars.getScrollTop();
     }
@@ -26,7 +26,7 @@ class CustomScrollbars extends Component {
     };
 
     scrollTo = (targetTop) => {
-        const {quickScroll} = this.props;
+        const { quickScroll } = this.props;
         if (!this.ref || !this.ref.current) {
             return;
         }
@@ -55,36 +55,36 @@ class CustomScrollbars extends Component {
 
     renderTrackHorizontal = (props) => {
         return (
-            <div {...props} className="track-horizontal"/>
+            <div {...props} className="track-horizontal" />
         );
     };
 
     renderTrackVertical = (props) => {
         return (
-            <div {...props} className="track-vertical"/>
+            <div {...props} className="track-vertical" />
         );
     };
 
     renderThumbHorizontal = (props) => {
         return (
-            <div {...props} className="thumb-horizontal"/>
+            <div {...props} className="thumb-horizontal" />
         );
     };
 
     renderThumbVertical = (props) => {
         return (
-            <div {...props} className="thumb-vertical"/>
+            <div {...props} className="thumb-vertical" />
         );
     };
 
     renderNone = (props) => {
         return (
-            <div/>
+            <div />
         );
     };
 
     render() {
-        const {className, disableVerticalScroll, disableHorizontalScroll, children, ...otherProps} = this.props;
+        const { className, disableVerticalScroll, disableHorizontalScroll, children,...otherProps } = this.props;
         return (
             <Scrollbars
                 ref={this.ref}

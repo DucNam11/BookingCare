@@ -1,0 +1,118 @@
+:root {
+    --color-primary: #45c3d2;
+    --color-title-sub: #969495;
+    --color-btn: #ffc419;
+    --color-background-section: #f5f5f5;
+    --color-background-text: #eee;
+    --color-background-handbook: #fcfaf6;
+    --toastify-color-light: #fff;
+    --color-notify: rgb(170, 9, 9);
+
+    --color-intro-bookingCare-text: #3c763d;
+    --color-intro-bookingCare-background: #dff0d8;
+    --color-intro-bookingCare-border: #d6e9c6;
+}
+
+* {
+    font-family: 'Dancing Script', cursive;
+    font-family: 'Roboto', sans-serif;
+    // white-space: pre-wrap;
+}
+
+.customToast {
+    background-color: var(--toastify-color-light);
+}
+.coverArea {
+    width: 65%;
+    margin: 0 auto;
+}
+
+.intro-bookingCare {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 5px 20px 0px;
+    border-radius: 8px;
+    margin-top: 30px;
+    background-color: var(--color-intro-bookingCare-background);
+    border: 1px solid var(--color-intro-bookingCare-border);
+    & .icon {
+        font-size: 20px;
+        color: var(--color-btn);
+        padding: 0px 10px;
+    }
+    & h4 {
+        font-size: 14px;
+        letter-spacing: 1.4;
+        color: var(--color-intro-bookingCare-text);
+    }
+}
+
+.dot-notify {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #b50808;
+}
+
+.select-active {
+    color: #000;
+    // text-decoration: underline;
+}
+.form-check-label {
+    cursor: pointer;
+    margin-right: 4px;
+    &:not(.select-active):hover {
+        opacity: 0.8;
+    }
+}
+
+td > img {
+    max-width: 200px;
+    max-height: 120px;
+}
+
+.mr8 {
+    margin-right: 8px;
+}
+.ml8 {
+    margin-left: 8px;
+}
+
+.preview-bottom {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    width: 100%;
+    height: 80px;
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
+}
+.preview-right {
+    position: absolute;
+    top: -30px;
+    left: 110%;
+    width: 100%;
+    height: 80px;
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
+}
+
+.position-loading {
+    position: relative;
+}
+
+.w60 {
+    width: 70% !important;
+    margin: 0 auto;
+}
+
+.w80 {
+    width: 80%;
+    margin: 0 auto;
+}

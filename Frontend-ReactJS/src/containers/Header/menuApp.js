@@ -1,80 +1,73 @@
 export const adminMenu = [
-    {// Quản lý người dùng
-        name: 'menu.admin.manage-user', menus: [
-            {
-                name: 'menu.admin.CRUD', link: '/system/user-manage'
-
-            },
-            {
-                name: 'menu.admin.CRUD-REDUX', link: '/system/user-redux'
-            },
-            // {
-            //     name: 'menu.admin.manage-admin', link: '/system/user-admin'
-
-            // },
-            {
-                name: 'menu.admin.manage-doctor', link: '/system/manage-doctor'
-
-            },
-            {// Quản lý kế hoạch khám bệnh
-
-                name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule'
-            },
-            {
-                name: 'menu.doctor.manage-patient', link: '/system/manage-patient-admin'
-            },
-
-        ]
+    {
+        //quản lý người dùng:
+        name: 'menu.admin.manage-user',
+        menus: [
+            { name: 'menu.admin.crud-redux', link: '/system/user-redux' },
+            // { name: 'menu.admin.crud', link: '/system/user-manage' },
+            { name: 'menu.admin.manage-doctor', link: '/system/manage-doctor' },
+            // { name: 'menu.admin.manage-admin', link: '/system/user-admin' },
+            { name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule' },
+            { name: 'menu.doctor.manage-appointment', link: '/doctor/manage-patient-appointment' },
+        ],
     },
-    {// Quản lý Phòng khám
-        name: 'menu.admin.clinic', menus: [
-            {
-                name: 'menu.admin.manage-clinic', link: '/system/manage-clinic'
-
-            },
-
-        ]
+    {
+        //quản lý phòng khám:
+        name: 'menu.admin.manage-clinic',
+        menus: [
+            { name: 'menu.admin.clinic', link: '/system/manage-clinic' },
+            // { name: 'menu.admin.listClinic', link: '/system/manage-clinic' },
+        ],
     },
-    {// Quản lý Chuyên Khoa
-        name: 'menu.admin.specialty', menus: [
-            {
-                name: 'menu.admin.manage-specialty', link: '/system/manage-specialty'
-
-            },
-        ]
+    {
+        //quản lý chuyên khoa:
+        name: 'menu.admin.manage-specialty',
+        menus: [
+            { name: 'menu.admin.specialty', link: '/system/manage-specialty' },
+            // { name: 'menu.admin.listSpecialty', link: '/system/manage-specialty' },
+        ],
     },
-    {// Quản lý Cẩm nang
-        name: 'menu.admin.handbook', menus: [
-            {
-                name: 'menu.admin.manage-handbook', link: '/system/manage-handbook-admin'
-            },
 
-        ]
+    {
+        //quản lý cẩm nang:
+        name: 'menu.admin.manage-handbook',
+        menus: [
+            { name: 'menu.admin.handbook', link: '/doctor/manage-handbook' },
+            { name: 'menu.admin.listHandbook', link: '/doctor/list-handbook' },
+        ],
     },
-    {// Quản lý goi kham
-        name: 'menu.admin.parkage', menus: [
-            {
-                name: 'menu.admin.manage-parkage', link: '/system/manage-parkage-admin'
-            },
-            {
-                name: 'menu.admin.manage-parkage-patient', link: '/system/manage-patient-parkage'
-            },
-
-        ]
+    {
+        //quản lý cẩm nang:
+        name: 'menu.admin.news',
+        menus: [
+            { name: 'menu.admin.news', link: '/doctor/manage-news' },
+            { name: 'menu.admin.listNews', link: '/doctor/list-news' },
+        ],
     },
 ];
 
 export const doctorMenu = [
-    {// Quản lý kế hoạch khám bệnh
+    {
         name: 'menu.admin.manage-user',
         menus: [
-            {
-                name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule'
-            },
-            {
-                name: 'menu.doctor.manage-patient', link: '/doctor/manage-patient'
-            },
-        ]
+            { name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule' },
+            { name: 'menu.doctor.manage-appointment', link: '/doctor/manage-patient-appointment' },
+        ],
     },
-
+    {
+        //quản lý cẩm nang:
+        name: 'menu.admin.manage-handbook',
+        menus: [
+            { name: 'menu.admin.handbook', link: '/doctor/manage-handbook' },
+            { name: 'menu.admin.listHandbook', link: '/doctor/list-handbook' },
+        ],
+    },
+    {
+        //quản lý cẩm nang:
+        name: 'menu.admin.news',
+        menus: [
+            { name: 'menu.admin.news', link: '/doctor/manage-news' },
+            { name: 'menu.admin.listNews', link: '/doctor/list-news' },
+        ],
+    },
 ];

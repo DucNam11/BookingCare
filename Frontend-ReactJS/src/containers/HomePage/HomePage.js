@@ -1,57 +1,105 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import HeaderHomePage from './HeaderHomePage';
-import Specialty from './Section/Specialty';
-import MedicalFacility from './Section/Medical-Facility';
-import OutstaindingDoctor from './Section/Outstainding-doctor';
-import Handbook from './Section/Handbook';
-import About from './Section/about'
-import FooterHomePage from './FooterHomePage';
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import BoxBackground from './Sections/BoxBackground';
+import Section from './Sections/Section';
+import News from './Sections/News';
+import About from './Sections/About';
+import TopDoctor from './Sections/TopDoctor';
+import * as actions from '../../store/actions';
+
+import ListSpecialty from '../Patient/Specialty/ListSpecialty';
+import ListClinic from '../Patient/Clinic/ListClinic';
+import ListDoctor from '../Patient/Doctor/ListDoctor';
+import ListHandbook from '../Patient/Handbook/ListHandbook';
+
+import { FormattedMessage } from 'react-intl';
 
 class HomePage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            modalSpecialty: false,
+            modalClinic: false,
+            modalDoctor: false,
+            modalHandbook: false,
+            modalHealth: false,
+        };
+    }
+    async componentDidMount() {}
+    componentDidUpdate() {}
+    toggleModel = (modal) => {
+        this.setState({
+            [modal]: !this.state[modal],
+        });
+    };
 
     render() {
-        const settings = {
-            dots: false,
-            infinite: true,
-            speed: 500,
-            slidesToShow: 4,
-            slidesToScroll: 1
-        };
+        let { listDataClinicRedux, listDataSpecialtyRedux, listDataHandbookRedux } = this.props;
+        let { modalSpecialty, modalClinic, modalDoctor, modalHandbook } = this.state;
+
         return (
-
-            <div>
-                <HeaderHomePage isShowBanner={true}/>
-                <Specialty
-                    settings={settings}
+            <div className="home-container">
+                {modalSpecialty && <ListSpecialty modalSpecialty={modalSpecialty} toggleModel={this.toggleModel} />}
+                {modalClinic && <ListClinic modalClinic={modalClinic} toggleModel={this.toggleModel} />}
+                {modalDoctor && <ListDoctor modalDoctor={modalDoctor} toggleModel={this.toggleModel} />}
+                {modalHandbook && <ListHandbook modalHandbook={modalHandbook} toggleModel={this.toggleModel} />}
+                <BoxBackground />
+                <News />
+                <Section
+                    type="sec"
+                    listSpecialty={listDataSpecialtyRedux}
+                    typeSec={'specialtyType'}
+                    background="background"
+                    title={<FormattedMessage id="homepage.specialty" />}
+                    button={<FormattedMessage id="homepage.more" />}
+                    modal="modalSpecialty"
+                    toggleModel={this.toggleModel}
+                    slideShow={4}
                 />
-                <MedicalFacility
-                    settings={settings}
+                <Section
+                    type="sec"
+                    typeSec="clinics"
+                    listClinic={listDataClinicRedux}
+                    title={<FormattedMessage id="homepage.clinic" />}
+                    button={<FormattedMessage id="homepage.search" />}
+                    modal="modalClinic"
+                    toggleModel={this.toggleModel}
+                    slideShow={4}
                 />
-                <OutstaindingDoctor
-                    settings={settings}
+                <TopDoctor type="doctor" slideShow={4} modal="modalDoctor" toggleModel={this.toggleModel} />
+                <Section
+                    background="background"
+                    type="handbook"
+                    typeSec="handbook"
+                    listHandbook={listDataHandbookRedux}
+                    title={<FormattedMessage id="homepage.handbook" />}
+                    button={<FormattedMessage id="homepage.all-handbook" />}
+                    modal="modalHandbook"
+                    toggleModel={this.toggleModel}
+                    slideShow={2}
                 />
-                <Handbook
-                    settings={settings}
-                />
-                <About/>
-                <FooterHomePage/>
+                <About title={<FormattedMessage id="homepage.about" />} />
             </div>
-        )
-
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        isLoggedIn: state.user.isLoggedIn
+        isLoggedIn: state.user.isLoggedIn,
+        listDataSpecialtyRedux: state.patient.listDataSpecialty,
+        listDataClinicRedux: state.patient.listDataClinic,
+        listDataHandbookRedux: state.patient.listDataHandbook,
+        topDoctorsRedux: state.doctor.topDoctors,
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getAllSpecialtyRedux: () => dispatch(actions.getAllSpecialty()),
+        getHandbookRedux: () => dispatch(actions.getHandbookRedux()),
+        getAllClinicRedux: (isGetImage) => dispatch(actions.getAllClinicRedux(isGetImage)),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

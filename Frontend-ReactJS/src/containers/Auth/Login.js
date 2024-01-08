@@ -1,152 +1,271 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {push} from "connected-react-router";
-import * as actions from "../../store/actions";
-import './Login.scss';
-import {handleLoginApi} from '../../services/userService';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
 
+import * as actions from '../../store/actions';
+import './Login.scss';
+import './Login2.scss';
+import { handleLoginApi, registerServices } from '../../services/userServices';
+import Cookies from 'universal-cookie';
+import { classCookies } from '../../cookies';
+import { classStorage } from '../../storage';
+import { withRouter } from 'react-router';
+import { validateEmail, validatePhonenumber } from '../../utils/validate';
+import { KeyCodeUtils } from '../../utils';
+import Loading from '../../components/Loading';
+import jwt_decode from 'jwt-decode';
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            email: '',
             password: '',
-            isShowPassword: false,
-            errMessage: ''
-        }
-    }
+            confirmPassword: '',
 
-    handleOnChangeUsername = (event) => {
-        this.setState({
-            username: event.target.value
-        })
+            message: '',
+            isRegister: false,
+            isShowMessage: false,
+            isShowLoading: false,
+        };
     }
-    handleOnChangePassword = (event) => {
-        this.setState({
-            password: event.target.value
-        })
-    }
+    componentDidMount() {}
+
+    handlerKeyDown = (event) => {
+        const keyCode = event.which || event.keyCode;
+        if (keyCode === KeyCodeUtils.ENTER) {
+            this.handleLogin();
+        }
+    };
+
+    handleChange = (e, name) => {
+        this.setState({ [name]: e.target.value, message: '' });
+    };
+
     handleLogin = async () => {
-        this.setState({
-            errMessage: ''
-        })
+        if ((this.state.email, this.state.password)) {
+            this.setState({ message: '', isShowLoading: true });
+        } else {
+            this.setState({ message: 'Missing form', isShowLoading: false });
+            return;
+        }
         try {
-            let data = await handleLoginApi(this.state.username, this.state.password);
-            if (data && data.errCode !== 0) {
-                this.setState({
-                    errMessage: data.message
-                })
+            let dataResponse = await handleLoginApi(this.state.email, this.state.password);
+            console.log(dataResponse);
+            if (dataResponse && dataResponse.errorCode === 1 && dataResponse.message) {
+                this.setState({ message: dataResponse.message, isShowMessage: true, isShowLoading: false });
             }
-            if (data && data.errCode === 0) {
-                this.props.userLoginSuccess(data.user)
-                console.log('login succeeds')
+            if (dataResponse && dataResponse.errorCode === 0) {
+                //login success
+                classCookies.setToken('accessToken', dataResponse.accessToken);
+                classCookies.setToken('refreshToken', dataResponse.refreshToken);
+                let userInfor = jwt_decode(dataResponse.accessToken);
+                classStorage.setItemStorage('refreshToken', dataResponse.refreshToken);
+
+                await this.props.userLoginSuccess(userInfor, userInfor.roleId);
+                if (userInfor.roleId === 'R3') {
+                    // classStorage.setItemStorage('email', this.state.email);
+                    this.props.history.push(`/`);
+                } else if (userInfor.roleId === 'R1') {
+                    this.props.history.push(`/system/welcome`);
+                } else if (userInfor.roleId === 'R2') {
+                    this.props.history.push(`/doctor/manage-patient-appointment`);
+                }
+                this.setState({
+                    isShowLoading: false,
+                });
             }
         } catch (error) {
-            if (error.response) {
-                if (error.response.data) {
+            console.log(12123);
+            console.log('errorfdefe', error.errorCode);
+            if (error.response && error.response.data) {
+                this.setState({ message: error.response.message, isShowMessage: true, isShowLoading: false });
+            }
+        }
+    };
+    handleRegister = async () => {
+        this.setState({ message: '', isShowLoading: true });
+        let { email, password, confirmPassword, firstName, lastName, phoneNumber } = this.state;
+
+        if (!validateEmail(email)) {
+            this.setState({ message: 'Email không hợp lệ.', isShowMessage: true, isShowLoading: false });
+            return;
+        } else {
+            try {
+                if (phoneNumber) {
+                    if (!validatePhonenumber(phoneNumber)) {
+                        this.setState({
+                            message: 'Số điện thoại không hợp lệ.',
+                            isShowMessage: true,
+                            isShowLoading: false,
+                        });
+                        return;
+                    }
+                }
+                let dataResponse = await registerServices({
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    email,
+                    password,
+                    confirmPassword,
+                });
+                console.log(dataResponse);
+                if (dataResponse && dataResponse.errorCode === 1 && dataResponse.message) {
+                    this.setState({ message: dataResponse.message, isShowMessage: true, isShowLoading: false });
+                }
+                if (dataResponse && dataResponse.errorCode === 0) {
+                    //login success
+                    const cookies = new Cookies();
+                    cookies.set('accessToken', dataResponse.accessToken, { path: '/' });
+                    classStorage.setItemStorage('refreshToken', classCookies.getRefreshToken('refreshToken'));
+
+                    this.handleLogin();
+                    this.props.history.push(`/home`);
                     this.setState({
-                        errMessage: error.response.data.message
-                    })
+                        isShowLoading: false,
+                    });
+                }
+            } catch (error) {
+                if (error.response && error.response.data) {
+                    this.setState({ message: error.response.message, isShowMessage: true, isShowLoading: false });
                 }
             }
         }
+    };
 
-    }
-    handleShowHidePassword = () => {
-        this.setState({
-            isShowPassword: !this.state.isShowPassword
-        })
-
-    }
-
-    handleKeyDown = (event) => {
-        if (event.key === "Enter") {
+    handleClickSubmit = () => {
+        let { isRegister } = this.state;
+        if (isRegister) {
+            this.handleRegister();
+        } else {
             this.handleLogin();
         }
-    }
-    returnToSignUp = () => {
-        if (this.props.history) {
-            this.props.history.push(`/sign-up`)
-        }
-    }
+    };
+
+    handleClickSignUp = () => {
+        this.setState({
+            isRegister: !this.state.isRegister,
+            isShowMessage: false,
+            message: '',
+        });
+    };
 
     render() {
+        let { isRegister, isShowLoading } = this.state;
         return (
-            <div className='login-background'>
-                <div className='login-container'>
-                    <div className='login-content row'>
-                        <div className='col-12 text-login'>Login</div>
-                        <div className='col-12 form-group login-input'>
-                            <label>Username:</label>
-                            <input type='text' className='form-control' placeholder='Enter your username'
-                                   value={this.state.username}
-                                   onChange={(event) => this.handleOnChangeUsername(event)}
-                            ></input>
-                        </div>
-                        <div className='col-12 form-group login-input'>
-                            <label>Password:</label>
-                            <div className='custom-input-password'>
+            <div className="login-background ">
+                <div className="login-container position-loading">
+                    {isShowLoading && <Loading />}
+                    <div className="login-content">
+                        <div className="col-12 text-center">{isRegister ? 'Đăng kí' : 'Đăng nhập'}</div>
+                        <div className="login-form">
+                            {/* ho va ten khi dang ki */}
+                            {isRegister && (
+                                <>
+                                    <div className="form-row mt-4 col-md-12 ">
+                                        <div className="form-group col-md-6 m0">
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Họ (*)"
+                                                value={this.state.firstName}
+                                                onChange={(e) => this.handleChange(e, 'firstName')}
+                                            />
+                                        </div>
+                                        <div className="form-group col-md-6 m0">
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Tên (*)"
+                                                value={this.state.lastName}
+                                                onChange={(e) => this.handleChange(e, 'lastName')}
+                                            />
+                                        </div>
+                                    </div>
 
+                                    <div className="form-group col-md-12 mt-4">
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="inputEmail4"
+                                            placeholder="Số điện thoại (*)"
+                                            value={this.state.phoneNumber}
+                                            onChange={(e) => this.handleChange(e, 'phoneNumber')}
+                                        />
+                                    </div>
+                                </>
+                            )}
+                            <div className="form-group col-md-12 mt-4">
                                 <input
-                                    type={this.state.isShowPassword ? 'text' : 'password'}
-                                    placeholder='Enter your password'
-                                    className='form-control'
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Email (*)"
+                                    value={this.state.email}
+                                    onChange={(e) => this.handleChange(e, 'email')}
+                                />
+                            </div>
+                            <div className="form-group col-md-12">
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    id="inputPassword4"
+                                    placeholder="Password (*)"
                                     value={this.state.password}
-                                    onChange={(event) => {
-                                        this.handleOnChangePassword(event)
-                                    }}
-                                    onKeyDown={(event) => this.handleKeyDown(event)}
-                                ></input>
-                                <span
-                                    onClick={() => {
-                                        this.handleShowHidePassword()
-                                    }}
-                                ><i className={this.state.isShowPassword ? "far fa-eye" : "far fa-eye-slash"}></i>
-                                </span>
-
+                                    onChange={(e) => this.handleChange(e, 'password')}
+                                />
                             </div>
                         </div>
-                        <div className='col-12' style={{color: 'red'}}>
-                            {this.state.errMessage}
+
+                        {isRegister && (
+                            <div className="form-group col-md-12">
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    placeholder="Enter your password (*)"
+                                    value={this.state.confirmPassword}
+                                    onChange={(e) => this.handleChange(e, 'confirmPassword')}
+                                />
+                            </div>
+                        )}
+                        <div className="col-12 text-response">
+                            <p>{this.state.message}</p>
                         </div>
-                        <div className='col-12 '>
-                            <button className='btn-login' onClick={() => {
-                                this.handleLogin()
-                            }}>Login
+                        <div className="col-12 btn-container">
+                            <button className="btn btn-primary" onClick={() => this.handleClickSubmit()}>
+                                {isRegister ? 'Đăng kí' : 'Đăng nhập'}
                             </button>
                         </div>
-                        <div className='col-12 '>
-                            <button className='btn-login' onClick={() => {
-                                this.returnToSignUp()
-                            }}>Sign Up
-                            </button>
-                        </div>
-                        <div className='col-12 text-center mt-3'>
-                            <span className='text-othor-login'>Or Login With:</span>
-                        </div>
-                        <div className='col-12 social-login'>
-                            <i className="fab fa-google google"></i>
-                            <i className="fab fa-facebook facebook"></i>
+
+                        <div className="col-12 register">
+                            <span>
+                                {!isRegister && 'Not a member? '}
+                                <span className="btn-signup" onClick={() => this.handleClickSignUp()}>
+                                    {isRegister ? 'Đăng nhập' : 'Đăng kí'}
+                                </span>
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        language: state.app.language
+        language: state.app.language,
+        roleId: state.user.roleId,
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {
         navigate: (path) => dispatch(push(path)),
-        // userLoginFail: () => dispatch(actions.adminLoginFail()),
-        userLoginSuccess: (userInfo) => dispatch(actions.userLoginSuccess(userInfo))
+        userLoginSuccess: (userInfo, roleId) => dispatch(actions.userLoginSuccess(userInfo, roleId)),
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

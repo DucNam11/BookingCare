@@ -1,76 +1,104 @@
-import handbookService from '../services/handbookService'
+import handbookServices from '../services/handbookServices';
 
-let createNewHandbook = async (req, res) => {
+let postHandbook = async (req, res) => {
     try {
-        let data = await handbookService.createNewHandbook(req.body)
-        return res.status(200).json(data)
-    } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from server'
-        })
-    }
-}
-let getAllHandbook = async (req, res) => {
-    try {
-        let data = await handbookService.getAllHandbook()
-        return res.status(200).json(data)
-    } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from server'
-        })
-    }
-}
-let getDetailhandbookById = async (req, res) => {
-    try {
-        let data = await handbookService.getDetailhandbookById(req.query.id)
-        return res.status(200).json(data)
-    } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "Error from server"
-        })
-    }
-}
-let deleteHandbookById = async (req, res) => {
-    try {
-        if (!req.body.id) {
-            return res.status(200).json({
-                errCode: 1,
-                errMessage: "Missing parameterA"
-            })
-        } else {
-            let data = await handbookService.deleteHandbookById(req.body.id)
-            return res.status(200).json({
-                errCode: 0,
-                errMessage: 'Delete Success'
-            })
+        let data = req.body;
+        let accessToken = req.headers.accesstoken;
+        let response = await handbookServices.postHandbookServices(data, accessToken);
+        if (response) {
+            return res.status(200).json(response);
         }
     } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "error from server"
-        })
+        console.log(error);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error in server...',
+        });
     }
-}
-let editHandbookById = async (req, res) => {
+};
+let getHandbook = async (req, res) => {
     try {
-        let data = await handbookService.editHandbookById(req.body)
-        return res.status(200).json(data)
+        let { id, type, statusId } = req.query;
+
+        let response = await handbookServices.getHandbookServices(id, type, statusId);
+        if (response) {
+            return res.status(200).json(response);
+        }
     } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "Error from Server"
-        })
+        console.log(error);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error in server...',
+        });
     }
-}
+};
+let confirmHandbook = async (req, res) => {
+    try {
+        let accessToken = req.headers.accesstoken;
+        let id = req.query.id;
+        let response = await handbookServices.confirmHandbookServices(id, accessToken);
+        if (response) {
+            return res.status(200).json(response);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error in server...',
+        });
+    }
+};
+let deleteHandbook = async (req, res) => {
+    try {
+        let id = req.query.id;
+        let response = await handbookServices.deleteHandbookServices(id);
+        if (response) {
+            return res.status(200).json(response);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error in server...',
+        });
+    }
+};
+let checkQueueHandbook = async (req, res) => {
+    try {
+        let response = await handbookServices.checkQueueHandbookServices();
+        if (response) {
+            return res.status(200).json(response);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error in server...',
+        });
+    }
+};
+let pagingHandbook = async (req, res) => {
+    try {
+        let { page, limit, statusId } = req.query;
+        const offset = !page || +page <= 1 ? 0 : (+page - 1) * limit;
+        limit = +limit || 5;
+
+        let response = await handbookServices.PagingHandbookServices({ offset, limit, statusId });
+        if (response && response.errorCode === 0) return res.status(200).json(response);
+        else {
+            return res.status(400).json(response);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ errorCode: 1, message: 'Có lỗi xảy ra!' });
+    }
+};
 
 module.exports = {
-    createNewHandbook: createNewHandbook,
-    getAllHandbook: getAllHandbook,
-    getDetailhandbookById: getDetailhandbookById,
-    deleteHandbookById: deleteHandbookById,
-    editHandbookById: editHandbookById
-
-}
+    postHandbook,
+    getHandbook,
+    confirmHandbook,
+    deleteHandbook,
+    checkQueueHandbook,
+    pagingHandbook,
+};

@@ -1,278 +1,251 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {CRUD_ACTIONS} from '../../../utils'
-import './ManageHandbook.scss'
-import MarkdownIt from 'markdown-it';
-import MdEditor from 'react-markdown-editor-lite';
-import CommonUtils from '../../../utils/CommonUtils'
-import {toast} from 'react-toastify'
-import {
-    createNewHandbook,
-    deleteHandbook,
-    editHandbookById,
-    getAllHandbook,
-    getDetailHandbookById
-} from '../../../services/userService'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { LANGUAGES, CommonUtils, PATH_FIREBASE } from '../../../utils';
+import * as actions from '../../../store/actions';
+import Select from 'react-select';
+import { FormattedMessage } from 'react-intl';
+import { postHandbookServices } from '../../../services/userServices';
+import { FaFileUpload } from 'react-icons/fa';
 import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
-
-
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+import './ManageHandbook.scss';
+import { toast } from 'react-toastify';
+import { uploadFileToFirebase } from '../../../firebase/uploadFile';
+import CKeditor from '../../../components/CKeditor/CKeditor';
+import Loading from '../../../components/Loading';
 
 class ManageHandbook extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            id: '',
-            name: '',
-            imageBase64: '',
-            contentHTML: '',
+            isShowBoxImage: false,
+            isRoomImage: false,
+            previewImageUrl: '',
+            image: '',
+            file: '',
+
+            allDoctor: [],
+            adviser: '',
+            authors: '',
+            title: '',
+            contentHtml: '',
             contentMarkdown: '',
-            userId: '',
 
-            arrHandbook: [],
-            previewImgUrl: '',
-            action: '',
-            isOpen: false
-        }
+            isShowLoading: false,
+        };
     }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-
-    }
-
     async componentDidMount() {
-        await this.handleGetAllHandbook()
+        this.props.fetchAllDoctorRedux();
     }
-
-    handleGetAllHandbook = async () => {
-        let {arrHandbook} = this.state
-        let res = await getAllHandbook()
-        if (res && res.errCode === 0) {
+    componentDidUpdate(prevProps) {
+        if (prevProps.allDoctorRedux !== this.props.allDoctorRedux) {
+            let listDoctor = this.buildInputSelectName(this.props.allDoctorRedux);
             this.setState({
-                arrHandbook: res.data,
-                action: CRUD_ACTIONS.CREATE,
-            })
+                allDoctor: listDoctor,
+            });
         }
     }
-    handleOnchangeInput = (event, id) => {
-        let copyState = {...this.state}
-        copyState[id] = event.target.value
+    buildInputSelectName = (data) => {
+        let result = [];
+        if (data && data.length > 0) {
+            result = data.map((item, index) => {
+                let object = {};
+                let labelVi = `${item.firstName} ${item.lastName}`;
+                let labelEn = `${item.lastName} ${item.firstName}`;
+                object.label = this.props.languageRedux === LANGUAGES.VI ? labelVi : labelEn;
+                object.value = item.id;
+                return object;
+            });
+        }
+        return result;
+    };
+
+    onChangeInput = (key, value) => {
         this.setState({
-            ...copyState
-        })
-    }
-    handleEditorChange = ({html, text}) => {
+            [key]: value,
+        });
+    };
+    handlePickDoctor = (e) => {
+        let adviser = e.map((item) => item.value);
         this.setState({
-            contentHTML: html,
-            contentMarkdown: text
-        })
-    }
-    handleOnchangeImage = async (event) => {
-        let data = event.target.files
-        let file = data[0]
-        let base64 = await CommonUtils.getBase64(file)
+            adviser: adviser.join(),
+        });
+    };
+    handleEditorChange = (data) => {
+        this.setState({
+            contentHtml: data,
+        });
+    };
+    handleOnchangeImage = async (e) => {
+        let data = e.target.files;
+        let file = data[0];
         if (file) {
-            let objectUrl = URL.createObjectURL(file)
-            this.setState({
-                imageBase64: base64,
-                previewImgUrl: objectUrl,
-            })
+            let base64 = await CommonUtils.getBase64(file);
+            let objectUrl = URL.createObjectURL(file);
+            this.setState({ previewImageUrl: objectUrl, isShowBoxImage: true, image: base64, file: file });
         }
-    }
-    openPreviewImage = async () => {
-        if (!this.state.previewImgUrl) return;
+    };
+    handleClickSubmit = async () => {
         this.setState({
-            isOpen: true
-        })
-    }
-    handleSaveHandbook = async () => {
-        let {action} = this.state
-        if (action === CRUD_ACTIONS.CREATE) {
-            let {userInfo} = this.props
-            let res = await createNewHandbook({
-                name: this.state.name,
-                imageBase64: this.state.imageBase64,
-                contentHTML: this.state.contentHTML,
-                contentMarkdown: this.state.contentMarkdown,
-                userId: userInfo.id,
-            })
-            if (res && res.errCode === 0) {
-                toast.success('Save new specialty success')
-                this.setState({
-                    name: '',
-                    imageBase64: '',
-                    contentHTML: '',
-                    contentMarkdown: '',
-                    previewImgUrl: ''
-                }, async () => {
-                    await this.handleGetAllHandbook()
-                })
+            isShowLoading: true,
+        });
+        let { adviser, authors, title, contentMarkdown, contentHtml, file } = this.state;
+        let imageURL = await uploadFileToFirebase(PATH_FIREBASE.HANDBOOK_IMAGE, file);
 
-            } else {
-                toast.error('Something Wrong')
-            }
-        }
-        if (action === CRUD_ACTIONS.EDIT) {
-            let res = await editHandbookById({
-                id: this.state.id,
-                name: this.state.name,
-                imageBase64: this.state.imageBase64,
-                contentHTML: this.state.contentHTML,
-                contentMarkdown: this.state.contentMarkdown,
-            })
-            if (res && res.errCode === 0) {
-                toast.success('Save specialty success')
-                this.setState({
-                    id: '',
-                    name: '',
-                    imageBase64: '',
-                    contentHTML: '',
-                    contentMarkdown: '',
-                    previewImgUrl: ''
-                }, async () => {
-                    await this.handleGetAllHandbook()
-                })
-
-            } else {
-                toast.error('Something Wrong')
-            }
-        }
-
-    }
-    handleDeleteHandbook = async (item) => {
-        let res = await deleteHandbook(item.id)
-        if (res && res.errCode === 0) {
-            toast.success('Delete Specialty Success')
-            await this.handleGetAllHandbook()
-        } else {
-            toast.error('Something Wrong')
-        }
-    }
-    handleEditHandbook = async (item) => {
-        let res = await getDetailHandbookById(item.id)
-        if (res && res.errCode === 0) {
-            let imageBase64 = ''
-            if (res.data.image) {
-                imageBase64 = Buffer.from(res.data.image, 'base64').toString('binary')
-            }
+        let response = await postHandbookServices({
+            adviser,
+            authors,
+            title,
+            contentMarkdown,
+            contentHtml,
+            image: imageURL,
+        });
+        if (response && response.errorCode === 0) {
+            toast.success(response.message, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
             this.setState({
-                id: item.id,
-                name: res.data.name,
-                imageBase64: imageBase64,
-                contentHTML: res.data.contentHTML,
-                contentMarkdown: res.data.contentMarkdown,
-                previewImgUrl: imageBase64,
-                action: CRUD_ACTIONS.EDIT,
-            })
+                isShowBoxImage: false,
+                isRoomImage: false,
+                previewImageUrl: '',
+                image: '',
+
+                adviser: '',
+                authors: '',
+                title: '',
+                contentHtml: '',
+                contentMarkdown: '',
+
+                isShowLoading: false,
+            });
+        } else if (response && response.errorCode === 1) {
+            toast.error(response.message, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
-    }
+    };
 
     render() {
-        let {arrHandbook} = this.state
+        let { allDoctor, authors, title, isShowLoading } = this.state;
         return (
-            <div className='manage-specialty-container'>
-                <div className='title'>Quản lý Handbook</div>
-                <div className='add-new-specialty row'>
-                    <div className='col-6 form-group'>
-                        <label>Tên Handbook</label>
-                        <input
-                            className='form-control'
-                            onChange={(event) => {
-                                this.handleOnchangeInput(event, 'name')
-                            }}
-                            value={this.state.name}
-                            type='text'
-                        />
-                    </div>
-                    <div className='col-4 form-group'>
-                        <label>Ảnh Thumbnail</label>
-                        <input
-                            className='form-control' id='previewImg'
-                            onChange={(event) => {
-                                this.handleOnchangeImage(event)
-                            }}
-                            type='file'
-                        />
-                        <div className='preview-image'
-                             style={{backgroundImage: `url(${this.state.previewImgUrl})`}}
-                             onClick={() => {
-                                 this.openPreviewImage()
-                             }}
-                        >
+            <div className="handbook_container position-loading">
+                {isShowLoading && <Loading />}
+
+                <div className="handbook-title title">
+                    <h3>Quản lý cẩm nang</h3>
+                </div>
+
+                <div className="wrapper-handbook w60">
+                    <div className="form-row">
+                        <div className="form-group col-md-6">
+                            <label forhtml="inputEmail4">Tiêu đề</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="inputEmail4"
+                                value={title}
+                                onChange={(e) => this.onChangeInput('title', e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group col-md-3 upload-file-container">
+                            <label htmlFor="inputCity">Chọn ảnh chủ đề</label>
+                            <div className="btn-container">
+                                <input
+                                    id="uploadFile"
+                                    type="file"
+                                    className="form-control"
+                                    hidden
+                                    onChange={(e) => this.handleOnchangeImage(e)}
+                                />
+                                <label className="text-upload" htmlFor="uploadFile">
+                                    <FormattedMessage id="manage-user.uploadImage" />
+                                    <FaFileUpload className="icon-upload" />
+                                </label>
+                                {this.state.isShowBoxImage && (
+                                    <div
+                                        className="preview pv-left preview-right"
+                                        style={{ backgroundImage: `url(${this.state.previewImageUrl})` }}
+                                        onClick={() => this.setState({ isRoomImage: true })}
+                                    ></div>
+                                )}
+                            </div>
+                            {this.state.isRoomImage && (
+                                <Lightbox
+                                    mainSrc={this.state.previewImageUrl}
+                                    onCloseRequest={() => this.setState({ isRoomImage: false })}
+                                />
+                            )}
                         </div>
                     </div>
-                    <div className='col-12'>
-                        <MdEditor style={{height: '400px'}}
-                                  renderHTML={text => mdParser.render(text)}
-                                  onChange={this.handleEditorChange}
-                                  value={this.state.contentMarkdown}
-                        />
+                    <div className="form-row">
+                        <div className="form-group col-md-6">
+                            <label forhtml="inputEmail4">Nhóm tác giả</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="inputEmail4"
+                                value={authors}
+                                onChange={(e) => this.onChangeInput('authors', e.target.value)}
+                            />
+                        </div>
+                        <div className=" form-group col-md-6">
+                            <label>Nhóm cố vấn</label>
+                            <Select
+                                placeholder={<FormattedMessage id="admin.manage-doctor.select-doctor" />}
+                                isMulti
+                                defaultValue={''}
+                                onChange={(e) => this.handlePickDoctor(e)}
+                                options={allDoctor}
+                            />
+                        </div>
                     </div>
-                    <div className='col-12'>
-                        <button className=' btn btn-primary btn-lg mt-3 '
-                                onClick={() => {
-                                    this.handleSaveHandbook()
-                                }}
+                    <div className="manage-doctor-editor">
+                        <label className="title-editor">
+                            {/* <FormattedMessage id="admin.manage-doctor.detail-doctor" /> */}
+                            Bài viết:
+                        </label>
+                        <CKeditor handleEditorChange={this.handleEditorChange} value={this.state.contentHtml} />
+                    </div>
+                    <div className="container_btn">
+                        <button
+                            className="btn btn-warning"
+                            onClick={() => {
+                                this.handleClickSubmit();
+                            }}
                         >
-                            SAVE
+                            Đăng bài
                         </button>
                     </div>
-                    <div className="table-responsive">
-                        <table className="table table-hover table-bordered table-striped text-center">
-                            <thead>
-                            <tr>
-                                <th scope="col">STT</th>
-                                <th scope="col">name</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {arrHandbook && arrHandbook.length > 0 && arrHandbook.map((item, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{item.name}</td>
-                                        <td>
-                                            <button className='btn-edit' onClick={() => {
-                                                this.handleEditHandbook(item)
-                                            }}>Edit
-                                            </button>
-                                            <button className='btn-delete' onClick={() => {
-                                                this.handleDeleteHandbook(item)
-                                            }}>Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
-                {this.state.isOpen === true &&
-                    <Lightbox
-                        mainSrc={this.state.previewImgUrl}
-                        onCloseRequest={() => this.setState({isOpen: false})}
-                    />
-                }
             </div>
-
-        )
-
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language,
-        userInfo: state.user.userInfo
+        languageRedux: state.app.language,
+        listAppointmentRedux: state.doctor.listAppointment,
+        allDoctorRedux: state.doctor.allDoctor,
+        userInfo: state.user.userInfo,
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        fetchAllDoctorRedux: () => dispatch(actions.fetchAllDoctor()),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageHandbook);

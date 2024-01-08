@@ -1,54 +1,63 @@
-import patientService from '../services/patientService'
+import {
+    patientBookAppointmentServices,
+    verifyAppointmentServices,
+    searchAllServices,
+} from '../services/patientServices';
 
 let postBookAppointment = async (req, res) => {
     try {
-        let info = await patientService.postBookAppointment(req.body)
-        return res.status(200).json(info)
-    } catch (error) {
-        console.log(error)
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from Server'
-        })
+        let response = await patientBookAppointmentServices(req.body);
+        if (response && response.errorCode === 0) {
+            return res.status(200).json(response);
+        } else {
+            return res.status(400).json(response);
+        }
+    } catch (e) {
+        console.log(e);
+        return res.status(501).json({
+            errorCode: 1,
+            message: 'Post book appointment FAIL',
+        });
     }
-}
+};
+
 let verifyBookAppointment = async (req, res) => {
     try {
-        let info = await patientService.verifyBookAppointment(req.body)
-        return res.status(200).json(info)
-    } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "Error from server"
-        })
+        let response = await verifyAppointmentServices(req.body);
+        if (response && response.errorCode === 0) {
+            return res.status(200).json(response);
+        } else {
+            return res.status(400).json(response);
+        }
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error from server',
+        });
     }
-}
-let postBookAppointmentParkage = async (req, res) => {
+};
+
+let searchAll = async (req, res) => {
     try {
-        let info = await patientService.postBookAppointmentParkage(req.body)
-        return res.status(200).json(info)
-    } catch (error) {
-        console.log(error)
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from Server'
-        })
+        let keyword = req.query.keyword || '';
+        let response = await searchAllServices(keyword.trim());
+        if (response && response.errorCode === 0) {
+            return res.status(200).json(response);
+        } else {
+            return res.status(400).json(response);
+        }
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error from server',
+        });
     }
-}
-let verifyBookAppointmentParkage = async (req, res) => {
-    try {
-        let info = await patientService.verifyBookAppointmentParkage(req.body)
-        return res.status(200).json(info)
-    } catch (error) {
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: "Error from server"
-        })
-    }
-}
+};
+
 module.exports = {
-    postBookAppointment: postBookAppointment,
-    verifyBookAppointment: verifyBookAppointment,
-    postBookAppointmentParkage: postBookAppointmentParkage,
-    verifyBookAppointmentParkage: verifyBookAppointmentParkage
-}
+    postBookAppointment,
+    verifyBookAppointment,
+    searchAll,
+};

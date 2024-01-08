@@ -1,7 +1,5 @@
 'use strict';
-const {
-    Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Specialty extends Model {
         /**
@@ -10,19 +8,20 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
-            Specialty.hasMany(models.Parkages, { foreignKey: 'specialtyId', as: 'specialtyIdData' })
-
+            Specialty.hasMany(models.Doctor_Infor, { foreignKey: 'specialtyId', as: 'specialtyData' });
         }
-    };
-    Specialty.init({
-        name: DataTypes.STRING,
-        descriptionHTML: DataTypes.TEXT,
-        descriptionMarkdown: DataTypes.TEXT,
-        image: DataTypes.TEXT,
-    }, {
-        sequelize,
-        modelName: 'Specialty',
-    });
+    }
+    Specialty.init(
+        {
+            name: DataTypes.STRING,
+            descriptionHtml: DataTypes.TEXT,
+            descriptionMarkdown: DataTypes.TEXT,
+            image: DataTypes.TEXT,
+        },
+        {
+            sequelize,
+            modelName: 'Specialty',
+        },
+    );
     return Specialty;
 };

@@ -1,94 +1,116 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import * as actions from "../../store/actions";
-import Navigator from '../../components/Navigator';
-import {adminMenu, doctorMenu} from './menuApp';
-import './Header.scss';
-import {LANGUAGE, USER_ROLE} from '../../utils';
-import {FormattedMessage} from 'react-intl';
-import _ from 'lodash'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
 
+import * as actions from '../../store/actions';
+import { LANGUAGES, TYPE_USER } from '../../utils';
+import Navigator from '../../components/Navigator';
+import { adminMenu, doctorMenu } from './menuApp';
+import { userImage } from '../../assets';
+import { classCookies } from '../../cookies';
+import { Link } from 'react-router-dom';
+import { AiFillHome } from 'react-icons/ai';
+import { push } from 'connected-react-router';
+import { withRouter } from 'react-router';
+
+import './Header.scss';
 
 class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            menuApp: []
+            menu: [],
+            roleId: '',
+            user: {},
+            queueNews: '',
+            queueHandbook: '',
+        };
+    }
+
+    async componentDidMount() {
+        let menuUser = [];
+        let user = classCookies.getDataAccessToken();
+        await this.props.checkQueueNewsRedux();
+        await this.props.checkQueueHandbookRedux();
+
+        if (this.props.roleId === TYPE_USER.ADMIN) {
+            menuUser = adminMenu;
+        } else if (this.props.roleId === TYPE_USER.DOCTOR) {
+            menuUser = doctorMenu;
+        } else {
+            menuUser = [];
         }
+        this.setState({ menu: menuUser, user: user });
     }
+    async componentDidUpdate(prevProps) {}
 
-    handleChangeLanguage = (language) => {
-        this.props.changeLanguageAppRedux(language)
-    }
-
-    componentDidMount() {
-        let {userInfo} = this.props
-        let menu = []
-        if (userInfo && !_.isEmpty(userInfo)) {
-            let role = userInfo.roleId
-
-            if (role === USER_ROLE.ADMIN) {
-                menu = adminMenu
-            }
-            if (role === USER_ROLE.DOCTOR) {
-                menu = doctorMenu
-            }
+    handleChangeLanguage = (languageInput) => {
+        if (languageInput === 'VN') {
+            this.props.changeLanguageRedux(LANGUAGES.EN);
+            return;
         }
-        this.setState({
-            menuApp: menu
-        })
-    }
-
+        if (languageInput === 'EN') {
+            this.props.changeLanguageRedux(LANGUAGES.VI);
+            return;
+        }
+        return;
+    };
     render() {
-        const {processLogout, language, userInfo} = this.props;
+        const { processLogout } = this.props;
+        const { user } = this.state;
+
         return (
             <div className="header-container">
                 {/* thanh navigator */}
                 <div className="header-tabs-container">
-                    <Navigator menus={this.state.menuApp}/>
+                    <Navigator menus={this.state.menu} />
                 </div>
-                <div className='languages'>
-                    <span className='welcome'>
-                        <FormattedMessage id='headerhomepage.welcome'/>
-                        {userInfo && userInfo.firstName ? userInfo.firstName : ''}
+                {/* box user */}
+                <div className="box-user">
+                    <div className="user">
+                        <span className="avatar">
+                            <img src={userImage} alt="avatar" />
+                        </span>
+                        <span className="name-user">
+                            {user && user.lastName ? user.firstName + ' ' + user.lastName : ''}
+                        </span>
+                    </div>
+                    <Link to="/home">
+                        <div className="btn-to-home" title="Trang chủ">
+                            <AiFillHome className="icon" />
+                        </div>
+                    </Link>
+                    <span className="languages" onClick={(e) => this.handleChangeLanguage(e.target.innerText)}>
+                        <FormattedMessage id="language" />
                     </span>
-                    <span className={language === LANGUAGE.VI ? 'language-vi active' : 'language-vi'}
-                          onClick={() => {
-                              this.handleChangeLanguage(LANGUAGE.VI)
-                          }}>
-                        VN
-                    </span>
-                    <span className={language === LANGUAGE.EN ? 'language-en active' : 'language-en'}
-                          onClick={() => {
-                              this.handleChangeLanguage(LANGUAGE.EN)
-                          }}>
-                        EN
-                    </span>
-                    {/* nút logout */}
-                    <div className="btn btn-logout" onClick={processLogout}>
+                    <div className="btn btn-logout" onClick={processLogout} title="Log out">
                         <i className="fas fa-sign-out-alt"></i>
                     </div>
                 </div>
-
             </div>
         );
     }
-
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         isLoggedIn: state.user.isLoggedIn,
         language: state.app.language,
         userInfo: state.user.userInfo,
+        roleId: state.user.roleId,
+        queueNews: state.user.queueNews,
+        queueHandbook: state.user.queueHandbook,
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {
+        navigate: (path) => dispatch(push(path)),
         processLogout: () => dispatch(actions.processLogout()),
-        changeLanguageAppRedux: (languageData) => dispatch(actions.changeLanguageApp(languageData))
+        changeLanguageRedux: (language) => dispatch(actions.changeLanguageApp(language)),
+        checkQueueNewsRedux: () => dispatch(actions.checkQueueNewsRedux()),
+        checkQueueHandbookRedux: () => dispatch(actions.checkQueueHandbookRedux()),
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

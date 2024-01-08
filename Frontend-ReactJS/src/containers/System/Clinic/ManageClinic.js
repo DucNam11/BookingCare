@@ -1,283 +1,246 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import './ManageClinic.scss'
-import {CRUD_ACTIONS} from '../../../utils'
-import MarkdownIt from 'markdown-it';
-import MdEditor from 'react-markdown-editor-lite';
-import CommonUtils from '../../../utils/CommonUtils'
-import {toast} from 'react-toastify'
-import {
-    createNewClinic,
-    deleteClinic,
-    editClinicById,
-    getAllClinic,
-    getAllClinicById
-} from '../../../services/userService'
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
-
-
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import './ManageClinic.scss';
+import ModalClinic from './ModalClinic';
+import { filterAndPagingClinic } from '../../../services/userServices';
+import SearchInput from '../../../components/SearchInput';
+import FooterPaging from '../../../components/FooterPaging';
+import ModalConfirm from '../ModalConfirm';
+import { deleteClinicByIdServices } from '../../../services';
+import { toast } from 'react-toastify';
+import Loading from '../../../components/Loading';
 
 class ManageClinic extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            id: '',
-            name: '',
-            address: '',
-            imageBase64: '',
-            descriptionHTML: '',
-            descriptionMarkdown: '',
-            arrClinic: [],
-            previewImgUrl: '',
-            action: '',
-            isOpen: false
-        }
-    }
+            isOpenModel: false,
+            listClinic: [],
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-    }
+            limit: 5,
+            keyword: '',
+            totalPage: 1,
+            count: 0,
+            pageIndex: 1,
 
-    componentDidMount() {
-        this.handleGetAllClinic()
-    }
+            isShowModalConfirm: false,
+            currentClinicId: '',
 
-    handleGetAllClinic = async () => {
-        let res = await getAllClinic()
-        if (res && res.errCode === 0) {
+            isShowLoading: false,
+        };
+    }
+    async componentDidMount() {
+        let { pageIndex, limit, keyword } = this.state;
+        this.handleFilterAndPaging(pageIndex, limit, keyword);
+    }
+    componentDidUpdate() {}
+
+    handleFilterAndPaging = async (pageIndex, limit, keyword) => {
+        this.setState({
+            isShowLoading: true,
+        });
+        let response = await filterAndPagingClinic(pageIndex, limit, keyword);
+        if (response && response.errorCode === 0) {
             this.setState({
-                arrClinic: res.data,
-                action: CRUD_ACTIONS.CREATE,
-            })
+                listClinic: response.data.rows,
+                totalPage: response.data.totalPage,
+                count: response.data.count,
+                pageIndex: pageIndex,
+                isShowLoading: false,
+            });
         }
-    }
-    handleOnchangeInput = (event, id) => {
-        let copyState = {...this.state}
-        copyState[id] = event.target.value
+    };
+
+    handleToggleModel = () => {
+        this.setState({ isOpenModel: !this.state.isOpenModel });
+    };
+
+    handleSearch = async (currentKeyword) => {
+        let { limit, pageIndex } = this.state;
         this.setState({
-            ...copyState
-        })
-    }
-    handleEditorChange = ({html, text}) => {
-        this.setState({
-            descriptionHTML: html,
-            descriptionMarkdown: text
-        })
-    }
-    handleOnchangeImage = async (event) => {
-        let data = event.target.files
-        let file = data[0]
-        let base64 = await CommonUtils.getBase64(file)
-        if (file) {
-            let objectUrl = URL.createObjectURL(file)
-            this.setState({
-                imageBase64: base64,
-                previewImgUrl: objectUrl,
-            })
-        }
-    }
-    openPreviewImage = async () => {
-        if (!this.state.previewImgUrl) return;
-        this.setState({
-            isOpen: true
-        })
-    }
-    handleSaveClinic = async () => {
-        let {action} = this.state
-        if (action === CRUD_ACTIONS.CREATE) {
-            let res = await createNewClinic({
-                name: this.state.name,
-                address: this.state.address,
-                imageBase64: this.state.imageBase64,
-                descriptionHTML: this.state.descriptionHTML,
-                descriptionMarkdown: this.state.descriptionMarkdown,
-            })
-            if (res && res.errCode === 0) {
-                toast.success('Save new Clinic success')
+            isShowLoading: true,
+        });
+        try {
+            let response = await filterAndPagingClinic(pageIndex, limit, currentKeyword);
+            if (response && response.errorCode === 0) {
                 this.setState({
-                    name: '',
-                    address: '',
-                    imageBase64: '',
-                    descriptionHTML: '',
-                    descriptionMarkdown: '',
-                    previewImgUrl: '',
-                }, async () => {
-                    await this.handleGetAllClinic()
-                })
-            } else {
-                toast.error('Something Wrong')
+                    listClinic: response.data.rows,
+                    totalPage: response.data.totalPage,
+                    count: response.data.count,
+                    pageIndex: pageIndex,
+                    keyword: currentKeyword,
+                    isShowLoading: false,
+                });
             }
+        } catch (error) {
+            console.log(error);
         }
-        if (action === CRUD_ACTIONS.EDIT) {
-            let res = await editClinicById({
-                id: this.state.id,
-                name: this.state.name,
-                address: this.state.address,
-                imageBase64: this.state.imageBase64,
-                descriptionHTML: this.state.descriptionHTML,
-                descriptionMarkdown: this.state.descriptionMarkdown,
-            })
-            if (res && res.errCode === 0) {
-                toast.success('Save new Clinic success')
-                this.setState({
-                    name: '',
-                    address: '',
-                    imageBase64: '',
-                    descriptionHTML: '',
-                    descriptionMarkdown: '',
-                    previewImgUrl: '',
-                }, async () => {
-                    await this.handleGetAllClinic()
-                })
-            } else {
-                toast.error('Something Wrong')
+    };
+
+    handleChangePage = async (numberPage) => {
+        console.log(numberPage);
+        let { limit, keyword, pageIndex, totalPage } = this.state;
+        if (numberPage === 'next') {
+            if (+pageIndex < +totalPage) {
+                this.handleFilterAndPaging(pageIndex + 1, limit, keyword);
             }
-        }
-    }
-    handleDeleteClinic = async (item) => {
-        let res = await deleteClinic(item.id)
-        if (res && res.errCode === 0) {
-            toast.success("Delete success Clinic")
-            this.handleGetAllClinic()
+        } else if (numberPage === 'back') {
+            if (+pageIndex > 1) {
+                this.handleFilterAndPaging(pageIndex - 1, limit, keyword);
+            }
         } else {
-            toast.error("Something wrong")
+            this.handleFilterAndPaging(numberPage, limit, keyword);
         }
-    }
-    handleEditClinic = async (item) => {
-        let res = await getAllClinicById(item.id)
-        if (res && res.errCode === 0) {
-            let imageBase64 = ''
-            if (res.data.image) {
-                imageBase64 = Buffer.from(res.data.image, 'base64').toString('binary')
-            }
+    };
+
+    toggleModelConfirm = (id) => {
+        this.setState({
+            isShowModalConfirm: !this.state.isShowModalConfirm,
+            currentClinicId: id,
+        });
+    };
+    handleDestroy = async () => {
+        this.setState({
+            isShowLoading: true,
+        });
+        let response = await deleteClinicByIdServices(this.state.currentClinicId);
+        if (response && response.errorCode === 0) {
+            this.toggleModelConfirm('');
+            let { pageIndex, limit, keyword } = this.state;
+            this.handleFilterAndPaging(pageIndex, limit, keyword);
+            toast.success(response.message, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
             this.setState({
-                id: item.id,
-                name: res.data.name,
-                address: res.data.address,
-                imageBase64: imageBase64,
-                descriptionHTML: res.data.descriptionHTML,
-                descriptionMarkdown: res.data.descriptionMarkdown,
-                previewImgUrl: imageBase64,
-                action: CRUD_ACTIONS.EDIT,
-            })
+                isShowLoading: false,
+            });
+        } else {
+            this.toggleModelConfirm('');
+            toast.success(response.message || 'Có lỗi xảy ra lui lòng tử lại.', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
-    }
+    };
+    handleShowLoading = () => {
+        this.setState({
+            isShowLoading: true,
+        });
+    };
+    handleHideLoading = () => {
+        this.setState({
+            isShowLoading: false,
+        });
+    };
 
     render() {
-        let {arrClinic} = this.state
+        let { isOpenModel, listClinic, count, totalPage, pageIndex, isShowModalConfirm, isShowLoading } = this.state;
         return (
-            <div className='manage-specialty-container'>
-                <div className='title'>Quản lý Phòng khám</div>
-                <div className='add-new-specialty row'>
-                    <div className='col-6 form-group'>
-                        <label>Tên Phòng khám</label>
-                        <input
-                            className='form-control'
-                            onChange={(event) => {
-                                this.handleOnchangeInput(event, 'name')
-                            }}
-                            value={this.state.name}
-                            type='text'
-                        />
-                    </div>
-                    <div className='col-6 form-group'>
-                        <label>Địa chỉ Phòng khám</label>
-                        <input
-                            className='form-control'
-                            onChange={(event) => {
-                                this.handleOnchangeInput(event, 'address')
-                            }}
-                            value={this.state.address}
-                            type='text'
-                        />
-                    </div>
-                    <div className='col-6 form-group'>
-                        <label>Ảnh phòng khám</label>
-                        <input
-                            className='form-control'
-                            onChange={(event) => {
-                                this.handleOnchangeImage(event)
-                            }}
-                            type='file'
-                        />
-                    </div>
-                    <div className='col-3 form-group preview-image'
-                         style={{backgroundImage: `url(${this.state.previewImgUrl})`}}
-                         onClick={() => {
-                             this.openPreviewImage()
-                         }}
-                    >
-                    </div>
-                    <div className='col-12'>
-                        <MdEditor style={{height: '400px'}}
-                                  renderHTML={text => mdParser.render(text)}
-                                  onChange={this.handleEditorChange}
-                                  value={this.state.descriptionMarkdown}
-                        />
-                    </div>
-                    <div className='col-12'>
-                        <button className=' btn btn-primary btn-lg mt-3 '
-                                onClick={() => {
-                                    this.handleSaveClinic()
-                                }}
-                        >
-                            SAVE
-                        </button>
-                    </div>
-                    <div className="table-responsive">
-                        <table className="table table-hover table-bordered table-striped text-center">
-                            <thead>
-                            <tr>
-                                <th scope="col">STT</th>
-                                <th scope="col">name</th>
-                                <th scope="col">address</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {arrClinic && arrClinic.length > 0 && arrClinic.map((item, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{item.name}</td>
-                                        <td>{item.address}</td>
-                                        <td>
-                                            <button className='btn-edit' onClick={() => {
-                                                this.handleEditClinic(item)
-                                            }}>Edit
-                                            </button>
-                                            <button className='btn-delete' onClick={() => {
-                                                this.handleDeleteClinic(item)
-                                            }}>Delete
-                                            </button>
-                                        </td>
+            <div>
+                {isOpenModel && (
+                    <ModalClinic
+                        toggleModel={this.handleToggleModel}
+                        isOpenModel={this.state.isOpenModel}
+                        reloadData={this.handleFilterAndPaging}
+                        handleHideLoading={this.handleHideLoading}
+                        handleShowLoading={this.handleShowLoading}
+                    />
+                )}
+                {isShowModalConfirm ? (
+                    <ModalConfirm
+                        isShowModalConfirm={isShowModalConfirm}
+                        toggleModelConfirm={this.toggleModelConfirm}
+                        handleDeleteItem={this.handleDestroy}
+                        text="Bạn muốn xoá phòng khám này"
+                        type="confirm"
+                        size="nm"
+                        currentUserId={this.state.currentUserId}
+                    />
+                ) : (
+                    ''
+                )}
+                <div className="container-table position-loading">
+                    {isShowLoading && <Loading />}
+                    <div className="title">Quản lý cơ sở khám bệnh</div>
+                    <div className="wrapper-table w60">
+                        <div className="action-container">
+                            <SearchInput placeholder="Tìm kiếm..." handleSearch={this.handleSearch} delay={800} />
+                            <button className="btn btn-primary" onClick={() => this.handleToggleModel()}>
+                                Thêm mới phòng khám
+                            </button>
+                        </div>
+                        <div className="wrapper-scroll">
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr className="fixedTop">
+                                        <th scope="col">STT</th>
+                                        <th scope="col">Ảnh Logo</th>
+                                        <th scope="col">Tên cơ sở</th>
+                                        <th scope="col">Địa chỉ</th>
+                                        <th scope="col">Hành động</th>
                                     </tr>
-                                )
-                            })}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {listClinic &&
+                                        listClinic.length > 0 &&
+                                        listClinic.map((item, index) => {
+                                            return (
+                                                <tr key={index}>
+                                                    <th scope="row">{index + 1}</th>
+                                                    <td>
+                                                        <div className="img-wrapper">
+                                                            <img src={item.imageLogo} atl="img"></img>
+                                                        </div>
+                                                    </td>
+                                                    <td>{item.nameClinic}</td>
+
+                                                    <td>{item.addressClinic}</td>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-warning"
+                                                            onClick={() => this.toggleModelConfirm(item.id)}
+                                                        >
+                                                            Xoá
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
+                            </table>
+                        </div>
+                        <FooterPaging
+                            titleTotalRecord="Tổng cơ sở"
+                            TotalPage={totalPage}
+                            PageIndex={pageIndex}
+                            TotalRecord={count}
+                            handleChangePage={this.handleChangePage}
+                        />
                     </div>
                 </div>
-                {this.state.isOpen === true &&
-                    <Lightbox
-                        mainSrc={this.state.previewImgUrl}
-                        onCloseRequest={() => this.setState({isOpen: false})}
-                    />
-                }
             </div>
-        )
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language,
+        languageRedux: state.app.language,
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {};
 };
 

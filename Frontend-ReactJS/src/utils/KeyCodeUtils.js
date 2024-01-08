@@ -1,5 +1,4 @@
 class KeyCodeUtils {
-
     static UP = 38;
 
     static DOWN = 40;
@@ -19,11 +18,9 @@ class KeyCodeUtils {
     static isNumeric(e) {
         return (e >= 48 && e <= 57) || (e >= 96 && e <= 105);
     }
-
     static isAlphabetic(e) {
-        return (e >= 65 && e <= 90);
+        return e >= 65 && e <= 90;
     }
-
     static isDecimal(e) {
         return e === 190 || e === 188 || e === 108 || e === 110;
     }

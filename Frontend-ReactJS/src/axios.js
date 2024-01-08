@@ -1,10 +1,13 @@
 import axios from 'axios';
 // import _ from 'lodash';
-// import config from './config';
 
+// instance.interceptors.response.use((response) => {
+//     return response.data;
+// });
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BACKEND_URL,
-    // withCredentials: true
+    withCredentials: true,
+    timeout: 7000,
 });
 
 instance.interceptors.response.use(
@@ -13,7 +16,7 @@ instance.interceptors.response.use(
     },
     (error) => {
         return Promise.reject(error);
-    }
+    },
 );
 
 export default instance;

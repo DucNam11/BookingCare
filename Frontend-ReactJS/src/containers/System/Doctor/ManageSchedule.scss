@@ -1,35 +1,53 @@
-.manage-schedule-container {
-  .s-m-title {
-    text-transform: uppercase;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    font-weight: 600;
-    font-size: 17px;
-    text-align: center;
-  }
-
-  .pick-hour-container {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-
-
-    button {
-      padding: 5px 15px;
-      border: 1px solid gray;
-      background: gainsboro;
+.wrapper {
+    margin: 20px 60px;
+    & .form-row {
+        display: flex;
+        padding: 0px 30px;
     }
-  }
+    & .schedule-container {
+        display: flex;
+        flex-wrap: wrap;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0px 10px;
 
-  .btn-schedule {
-    &.active {
-      background-color: orangered;
+        & .range-time {
+            margin: 10px 20px;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     }
-  }
+    & .btn-saveSchedule {
+        margin-top: 20px;
+        margin-left: 30px;
+    }
+    & .inputSelectAll {
+        margin-top: 10px;
+        padding-left: 30px;
+        display: flex;
 
-  .btn-save-schedule {
-    margin-top: 20px;
-  }
+        & .selectedAll {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            & p {
+                padding-right: 4px;
+            }
+        }
+        & .active {
+            background-color: var(--color-btn);
+            color: #fff;
+        }
+    }
+}
+
+.selected {
+    background-color: var(--color-btn);
 }

@@ -1,13 +1,23 @@
-.detail-handbook-body {
-  padding: 30px 100px;
-  background: #eee;
-  display: flex;
-  flex-direction: column;
-  font-size: 25px;
+.handbook-container {
+    padding-top: 75px;
+    & .handbook-wrapper {
+        margin-top: 20px;
+        & .handbook-detail-info {
+            & li {
+                padding-bottom: 4px;
+            }
+        }
 
-
-}
-
-.markdown-handbook {
-  padding: 30px 100px;
+        & .detail-clinic {
+            background-color: var(--color-background-handbook);
+            padding: 20px 50px;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+            & img {
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+    }
 }

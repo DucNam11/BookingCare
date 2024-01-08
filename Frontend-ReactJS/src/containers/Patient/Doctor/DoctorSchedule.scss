@@ -1,74 +1,106 @@
-.doctor-schedule-container {
-  border-right: 2px solid gray;
-  height: 100%;
+.schedule-container {
+    margin-top: 20px;
+    & .schedule-date {
+        & .select-box {
+            border: none;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+            border-right: 5px solid transparent;
+            border-left: 5px solid transparent;
+            font-weight: bold;
+            color: var(--color-primary);
+            font-size: 15px;
+            outline: none;
 
-  .all-schedule {
-    select {
-      border-bottom: 1px solid #ddd;
-      border-top: none;
-      border-right: none;
-      border-left: none;
-      outline: none;
-      cursor: pointer;
-      padding: 10px 2px;
-      color: gray;
-      font-weight: 600;
-      background-color: rgb(230, 221, 221);
-
-      option {
-        cursor: pointer;
-      }
+            & option {
+                font-weight: 200;
+                padding: 2px 0px;
+            }
+        }
     }
-  }
-
-  .all-available-time {
-    .title-calendar {
-      margin: 20px 0;
-
-      span {
-        text-transform: uppercase;
-        margin-left: 5px;
-      }
-    }
-
-    .time-content {
-
-
-      .time-content-btns {
+    & .schedule-title {
         display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-
-        button {
-          border: none;
-          outline: none;
-          padding: 8px 10px;
-          background-color: wheat;
-          border-radius: 5%;
-          font-weight: 600;
-
-          &:hover {
-            background-color: rgb(118, 118, 202)
-          }
+        align-items: center;
+        margin: 10px 10px 0px 10px;
+        & .icon-schedule {
+            font-size: 14px;
+            margin-right: 5px;
         }
-
-        .btn-en {
-          min-width: 170px;
+        & p {
+            font-size: 14px;
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: bold;
         }
-
-        .btn-vi {
-          min-width: 120px;
-        }
-      }
-
-      .no-schedule {
-        font-style: italic;
-        font-size: 18px;
-      }
-
-      .book-free {
-        margin-top: 10px;
-      }
     }
-  }
+
+    & .schedule {
+        width: 100%;
+        display: flex;
+        margin-bottom: 30px;
+
+        & .border-specialty {
+            border-right: 1px solid #ccc;
+        }
+        & .schedule-left {
+            flex: 10;
+
+            & .schedule-list {
+                display: flex;
+                flex-wrap: wrap;
+                cursor: pointer;
+
+                & .item-day {
+                    padding: 10px 0px;
+                    width: 155px;
+                    background-color: var(--color-btn);
+                    font-weight: bold;
+                    margin: 10px 15px 5px 0px;
+                    border-radius: 2px;
+                    border: 2px solid transparent;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    &:hover {
+                        border: 2px solid var(--color-primary);
+                    }
+                }
+                & p {
+                    display: block;
+                    margin-left: 20px;
+                    margin-top: 20px;
+                }
+                & .text {
+                    font-size: 12px;
+                    margin-top: 10px;
+                }
+            }
+        }
+        & .schedule-info {
+            flex: 9;
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            margin-top: 20px;
+
+            & .btn-show-price {
+                margin-top: 5px;
+                color: var(--color-primary);
+                font-size: 14px;
+                font-weight: 500px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.colum-specialty {
+    flex-direction: column;
+}
+.mr40 {
+    margin-right: 40px !important;
+}
+.pd50 {
+    padding-left: 50px;
 }

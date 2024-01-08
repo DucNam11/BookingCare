@@ -20,7 +20,7 @@ $selectedDayBackground: $colormain;
 
 input {
   &.custom-date-input {
-    word-spacing: -3px
+    word-spacing:-3px
   }
 }
 
@@ -269,7 +269,6 @@ input {
     &:before {
       border-bottom-color: $date-picker-border;
     }
-
     &:after {
       border-bottom-color: $date-picker-bg;
     }
@@ -279,7 +278,6 @@ input {
     &:before {
       border-top-color: $date-picker-border;
     }
-
     &:after {
       border-top-color: $date-picker-bg;
     }
@@ -304,7 +302,6 @@ input {
 
       &:hover {
         color: $date-picker-today-bg;
-
         svg {
           fill: $date-picker-arrow-hover;
         }
@@ -328,7 +325,6 @@ input {
 
   input {
     width: 100%;
-
     &::-ms-clear {
       display: none;
     }
@@ -385,43 +381,43 @@ input {
     }
   }
 
-  span {
-    border: 1px solid rgba($date-picker-day-fg, 0.15);
+    span {
+      border: 1px solid rgba($date-picker-day-fg, 0.15);
+
+      &:hover {
+        background: rgba(invert($date-picker-bg), 0.1);
+      }
+
+      &:active {
+        background: rgba(invert($date-picker-bg), 0.2);
+      }
+
+      &.arrowUp {
+        &:after {
+          border-left: 4px solid transparent;
+          border-right: 4px solid transparent;
+          border-bottom: 4px solid rgba($date-picker-day-fg, 0.6);
+        }
+      }
+
+      &.arrowDown {
+        &:after {
+          border-left: 4px solid transparent;
+          border-right: 4px solid transparent;
+          border-top: 4px solid rgba($date-picker-day-fg, 0.6);
+        }
+      }
+
+      svg {
+        path {
+          fill: rgba($date-picker-month-fg, 0.5);
+        }
+      }
+    }
 
     &:hover {
-      background: rgba(invert($date-picker-bg), 0.1);
+      background: rgba(invert($date-picker-bg), 0.05);
     }
-
-    &:active {
-      background: rgba(invert($date-picker-bg), 0.2);
-    }
-
-    &.arrowUp {
-      &:after {
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-bottom: 4px solid rgba($date-picker-day-fg, 0.6);
-      }
-    }
-
-    &.arrowDown {
-      &:after {
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 4px solid rgba($date-picker-day-fg, 0.6);
-      }
-    }
-
-    svg {
-      path {
-        fill: rgba($date-picker-month-fg, 0.5);
-      }
-    }
-  }
-
-  &:hover {
-    background: rgba(invert($date-picker-bg), 0.05);
-  }
 }
 
 .flatpickr-current-month {
@@ -482,28 +478,28 @@ input {
     }
   }
 
-  span.cur-month {
-    &:hover {
-      background: rgba(invert($date-picker-bg), 0.05);
-    }
-  }
-
-  .numInputWrapper {
-    span.arrowUp:after {
-      border-bottom-color: $date-picker-month-fg;
+    span.cur-month {
+      &:hover {
+        background: rgba(invert($date-picker-bg), 0.05);
+      }
     }
 
-    span.arrowDown:after {
-      border-top-color: $date-picker-month-fg;
-    }
-  }
+    .numInputWrapper {
+      span.arrowUp:after {
+        border-bottom-color: $date-picker-month-fg;
+      }
 
-  input.cur-year {
-    &[disabled], &[disabled]:hover {
-      color: rgba($date-picker-month-fg, 0.5);
-      background: transparent;
+      span.arrowDown:after {
+        border-top-color: $date-picker-month-fg;
+      }
     }
-  }
+
+    input.cur-year {
+      &[disabled], &[disabled]:hover {
+        color: rgba($date-picker-month-fg, 0.5);
+        background: transparent;
+      }
+    }
 }
 
 .flatpickr-monthDropdown-months {
@@ -537,15 +533,15 @@ input {
     padding: 0;
   }
 
-  background: $date-picker-month-bg;
+    background: $date-picker-month-bg;
 
-  &:hover {
-    background: rgba(invert($date-picker-bg), 0.05);
-  }
+    &:hover {
+      background: rgba(invert($date-picker-bg), 0.05);
+    }
 
-  .flatpickr-monthDropdown-month {
-    background-color: $date-picker-month-bg;
-  }
+    .flatpickr-monthDropdown-month {
+      background-color: $date-picker-month-bg;
+    }
 }
 
 .flatpickr-weekdays {
@@ -574,8 +570,8 @@ span.flatpickr-weekday {
   flex: 1;
   font-weight: bolder;
 
-  background: $date-picker-month-bg;
-  color: $date-picker-weekdays-fg;
+    background: $date-picker-month-bg;
+    color: $date-picker-weekdays-fg;
 }
 
 .dayContainer, .flatpickr-weeks {
@@ -612,9 +608,9 @@ span.flatpickr-weekday {
   transform: translate3d(0px, 0px, 0px);
   opacity: 1;
 
-  & + .dayContainer {
-    box-shadow: -1px 0 0 $date-picker-border;
-  }
+    & + .dayContainer {
+      box-shadow: -1px 0 0 $date-picker-border;
+    }
 }
 
 .flatpickr-day {
@@ -680,56 +676,56 @@ span.flatpickr-weekday {
     visibility: hidden;
   }
 
-  background: none;
-  border: 1px solid transparent;
-  color: $date-picker-day-fg;
+    background: none;
+    border: 1px solid transparent;
+    color: $date-picker-day-fg;
 
-  &, &.prevMonthDay, &.nextMonthDay {
-    &.inRange, &.today.inRange, &:hover, &:focus {
-      background: $date-picker-day-hover-bg;
-      border-color: $date-picker-day-hover-bg;
+    &, &.prevMonthDay, &.nextMonthDay {
+      &.inRange, &.today.inRange, &:hover, &:focus {
+        background: $date-picker-day-hover-bg;
+        border-color: $date-picker-day-hover-bg;
+      }
     }
-  }
 
-  &.today {
-    border-color: $date-picker-today-border;
-
-    &:hover, &:focus {
+    &.today {
       border-color: $date-picker-today-border;
-      background: $date-picker-today-bg;
-      color: $date-picker-today-fg;
-    }
-  }
 
-  &.selected, &.startRange, &.endRange {
-    &, &.inRange, &:focus, &:hover, &.prevMonthDay, &.nextMonthDay {
-      background: $selectedDayBackground;
-      box-shadow: none;
-      color: $selectedDayForeground;
-      border-color: $selectedDayBackground;
+      &:hover, &:focus {
+        border-color: $date-picker-today-border;
+        background: $date-picker-today-bg;
+        color: $date-picker-today-fg;
+      }
     }
 
-    &.startRange + .endRange:not(:nth-child(7n+1)) {
-      box-shadow: -5 * $dayMargin 0 0 $selectedDayBackground;
+    &.selected, &.startRange, &.endRange {
+      &, &.inRange, &:focus, &:hover, &.prevMonthDay, &.nextMonthDay {
+        background: $selectedDayBackground;
+        box-shadow: none;
+        color: $selectedDayForeground;
+        border-color: $selectedDayBackground;
+      }
+
+      &.startRange + .endRange:not(:nth-child(7n+1)) {
+        box-shadow: -5 * $dayMargin 0 0 $selectedDayBackground;
+      }
     }
-  }
 
-  &.inRange {
-    border-radius: 0;
-    box-shadow: -2.5 * $dayMargin 0 0 $date-picker-day-hover-bg, 2.5 * $dayMargin 0 0 $date-picker-day-hover-bg;
-  }
+    &.inRange {
+      border-radius: 0;
+      box-shadow: -2.5 * $dayMargin 0 0 $date-picker-day-hover-bg, 2.5 * $dayMargin 0 0 $date-picker-day-hover-bg;
+    }
 
-  &.flatpickr-disabled, &.flatpickr-disabled:hover,
-  &.prevMonthDay, &.nextMonthDay,
-  &.notAllowed, &.notAllowed.prevMonthDay, &.notAllowed.nextMonthDay {
-    color: rgba($date-picker-day-fg, 0.3);
-    background: transparent;
-    border-color: $disabledBorderColor;
-  }
+    &.flatpickr-disabled, &.flatpickr-disabled:hover,
+    &.prevMonthDay, &.nextMonthDay,
+    &.notAllowed, &.notAllowed.prevMonthDay, &.notAllowed.nextMonthDay {
+      color: rgba($date-picker-day-fg, 0.3);
+      background: transparent;
+      border-color: $disabledBorderColor;
+    }
 
-  &.flatpickr-disabled, &.flatpickr-disabled:hover {
-    color: rgba($date-picker-day-fg, 0.1);
-  }
+    &.flatpickr-disabled, &.flatpickr-disabled:hover {
+      color: rgba($date-picker-day-fg, 0.1);
+    }
 }
 
 .rangeMode .flatpickr-day {
@@ -758,17 +754,17 @@ span.flatpickr-weekday {
     }
   }
 
-  .flatpickr-weeks {
-    box-shadow: 1px 0 0 $date-picker-border;
-  }
-
-  span.flatpickr-day {
-    &, &:hover {
-      color: rgba($date-picker-day-fg, 0.3);
-      background: transparent;
-      border: none;
+    .flatpickr-weeks {
+      box-shadow: 1px 0 0 $date-picker-border;
     }
-  }
+
+    span.flatpickr-day {
+      &, &:hover {
+        color: rgba($date-picker-day-fg, 0.3);
+        background: transparent;
+        border: none;
+      }
+    }
 }
 
 .flatpickr-innerContainer {
@@ -863,29 +859,29 @@ span.flatpickr-weekday {
     font-weight: 400;
   }
 
-  .numInputWrapper {
-    span.arrowUp:after {
-      border-bottom-color: $date-picker-day-fg;
+    .numInputWrapper {
+      span.arrowUp:after {
+        border-bottom-color: $date-picker-day-fg;
+      }
+
+      span.arrowDown:after {
+        border-top-color: $date-picker-day-fg;
+      }
     }
 
-    span.arrowDown:after {
-      border-top-color: $date-picker-day-fg;
+    input {
+      color: $date-picker-day-fg;
     }
-  }
 
-  input {
-    color: $date-picker-day-fg;
-  }
-
-  .flatpickr-time-separator, .flatpickr-am-pm {
-    color: $date-picker-day-fg;
-  }
-
-  input, .flatpickr-am-pm {
-    &:hover, &:focus {
-      background: lighten($date-picker-day-hover-bg, 3);
+    .flatpickr-time-separator, .flatpickr-am-pm {
+      color: $date-picker-day-fg;
     }
-  }
+
+    input, .flatpickr-am-pm {
+      &:hover, &:focus {
+        background: lighten($date-picker-day-hover-bg, 3);
+      }
+    }
 }
 
 .flatpickr-input[readonly] {

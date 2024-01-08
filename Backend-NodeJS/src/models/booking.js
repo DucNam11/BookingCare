@@ -1,7 +1,5 @@
 'use strict';
-const {
-    Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Booking extends Model {
         /**
@@ -10,25 +8,49 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
-            Booking.belongsTo(models.User, { foreignKey: 'patientId', targetKey: 'id', as: 'patientData' })
-            Booking.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'timeTypeDataPatient' })
-
+            Booking.belongsTo(models.Allcode, {
+                foreignKey: 'timeType',
+                targetKey: 'keyMap',
+                as: 'timeAppointment',
+            });
+            Booking.belongsTo(models.Allcode, {
+                foreignKey: 'gender',
+                targetKey: 'keyMap',
+                as: 'genderDT',
+            });
+            Booking.belongsTo(models.User, {
+                foreignKey: 'patientId',
+                targetKey: 'id',
+                as: 'dataAcc',
+            });
+            Booking.belongsTo(models.User, {
+                foreignKey: 'doctorId',
+                targetKey: 'id',
+                as: 'dataAccDoctor',
+            });
         }
-    };
-    Booking.init({
-        statusId: DataTypes.STRING,
-        doctorId: DataTypes.INTEGER,
-        patientId: DataTypes.INTEGER,
-        date: DataTypes.STRING,
-        timeType: DataTypes.STRING,
-        token: DataTypes.STRING,
-        reason: DataTypes.TEXT,
-        parkageId: DataTypes.INTEGER,
-
-    }, {
-        sequelize,
-        modelName: 'Booking',
-    });
+    }
+    Booking.init(
+        {
+            bookFor: DataTypes.STRING,
+            uuid: DataTypes.STRING,
+            statusId: DataTypes.STRING,
+            doctorId: DataTypes.INTEGER,
+            patientId: DataTypes.INTEGER,
+            date: DataTypes.STRING,
+            timeType: DataTypes.STRING,
+            IDNumber: DataTypes.STRING,
+            gender: DataTypes.STRING,
+            namePatient: DataTypes.STRING,
+            YearOfBirth: DataTypes.INTEGER,
+            phoneNumber: DataTypes.STRING,
+            address: DataTypes.STRING,
+            reason: DataTypes.TEXT,
+        },
+        {
+            sequelize,
+            modelName: 'Booking',
+        },
+    );
     return Booking;
 };

@@ -1,210 +1,268 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import * as actions from "../../../store/actions";
-import {LANGUAGE} from '../../../utils/constant';
-import {FormattedMessage} from 'react-intl';
-import Select from 'react-select';
-// import DatePicker from 'react-flatpickr';
-import DatePicker from '../../../components/Input/DatePicker';
-import './ManageSchedule.scss'
-import {toast} from 'react-toastify'
-import {saveBulkScheduleDoctor} from '../../../services/userService'
-import _ from 'lodash'
+import React, { Component } from 'react';
+import { FormattedMessage } from 'react-intl';
+import { connect } from 'react-redux';
 
+import * as actions from '../../../store/actions';
+import { LANGUAGES } from '../../../utils';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import Select from 'react-select';
+import './ManageSchedule.scss';
+import _ from 'lodash';
+import { toast } from 'react-toastify';
+import { IoCheckboxOutline } from 'react-icons/io5';
 
 class ManageSchedule extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            listDoctors: [],
-            selectedDoctor: {},
-            currentDate: '',
-            rangeTime: [],
-        }
+            allDoctor: [],
+            selectedDoctor: '',
+            initDate: new Date().setHours(0, 0, 0, 0),
+            // dateSelected: moment(new Date()).format(dateFormat.SEND_TO_SERVER),
+            listSchedule: [],
+            scheduleDoctorCurrent: '',
+            isSelectedAll: false,
+        };
     }
 
     async componentDidMount() {
-        this.props.fetchAllDoctor()
-        this.props.fetchAllScheduleTime()
-    }
+        this.props.fetchAllDoctorRedux();
+        this.props.fetchAllcodeScheduleRedux();
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.allDoctors !== this.props.allDoctors) {
-            let dataSelect = this.buildDataInputSelect(this.props.allDoctors)
-            this.setState({
-                listDoctors: dataSelect
-            })
-        }
-        if (prevProps.allScheduleTime !== this.props.allScheduleTime) {
-            let data = this.props.allScheduleTime
-            if (data && data.length > 0) {
-                data = data.map(item => ({...item, isSelected: false}))
-            }
-            this.setState({
-                rangeTime: data
-            })
-        }
-    }
+        this.setState({
+            selectedDoctor: this.props.userInfo.id,
+        });
 
-    buildDataInputSelect = (inputData) => {
-        let result = []
-        let language = this.props.language
-        if (inputData && inputData.length > 0) {
-            inputData.map((item, index) => {
-                let object = {};
-                let labelVi = `${item.firstName} ${item.lastName}`
-                let labelEn = `${item.lastName} ${item.firstName}`
-                object.label = language === LANGUAGE.VI ? labelVi : labelEn
-                object.value = item.id
-                result.push(object)
-            })
+        if (this.props.roleId === 'R2') {
+            await this.props.getScheduleDoctorByDateRedux(this.props.userInfo.id, this.state.initDate);
         }
-        return result
     }
-    handleChangeSelect = async (selectedOption) => {
-        this.setState({
-            selectedDoctor: selectedOption
-        })
-    }
-    handleOnchangeDatePicker = (date) => {
-        this.setState({
-            currentDate: date[0]
-        })
-    }
-    handleClickBtnTime = (time) => {
-        let {rangeTime} = this.state
-        if (rangeTime && rangeTime.length > 0) {
-            rangeTime = rangeTime.map(item => {
-                if (item.id === time.id) {
-                    item.isSelected = !item.isSelected
+    componentDidUpdate(prevProps) {
+        if (prevProps.allDoctorRedux !== this.props.allDoctorRedux) {
+            let listDoctor = this.buildInputSelect(this.props.allDoctorRedux);
+            this.setState({
+                allDoctor: listDoctor,
+            });
+        }
+        if (prevProps.languageRedux !== this.props.languageRedux) {
+            let listDoctor = this.buildInputSelect(this.props.allDoctorRedux);
+            this.setState({
+                allDoctor: listDoctor,
+            });
+        }
+        if (prevProps.scheduleDoctorCurrentRedux !== this.props.scheduleDoctorCurrentRedux) {
+            let { listSchedule } = this.state;
+            let { scheduleDoctorCurrentRedux } = this.props;
+            let arrScheduleSelected = scheduleDoctorCurrentRedux.map((item) => item.timeType);
+            listSchedule.map((item) => {
+                if (arrScheduleSelected.includes(item.keyMap)) {
+                    item.isSelected = true;
+                } else {
+                    item.isSelected = false;
                 }
-                return item
-            })
+            });
             this.setState({
-                rangeTime: rangeTime
-            })
+                listSchedule: listSchedule,
+            });
+        }
+        if (prevProps.scheduleRedux !== this.props.scheduleRedux) {
+            let data = this.props.scheduleRedux;
+            if (data && data.length > 0) {
+                data = data.map((item) => {
+                    item.isSelected = false;
+                    return item;
+                });
+            }
+            this.setState({
+                listSchedule: data,
+            });
         }
     }
-    handleSaveSchedule = async () => {
-        let {language} = this.props
-        let {rangeTime, selectedDoctor, currentDate} = this.state
-        let result = []
-        if (!currentDate) {
-            toast.error('Invalid Date')
-            return
-        }
-        if (selectedDoctor && _.isEmpty(selectedDoctor)) {
-            toast.error('Invalid Selected Doctor')
-            return
-        }
-        // let formatedDate = moment(currentDate).format(dateFormat.SEND_TO_SERVER)
-        let formatedDate = new Date(currentDate).getTime()
-        if (rangeTime && rangeTime.length > 0) {
-            let selectedTime = rangeTime.filter(item => item.isSelected === true)
-            if (selectedTime && selectedTime.length > 0) {
-                selectedTime.map((schedule, index) => {
-                    let object = {}
-                    object.doctorId = selectedDoctor.value
-                    object.date = formatedDate
-                    object.timeType = schedule.keyMap
-                    result.push(object)
-                })
-            } else {
-                toast.error("Invalid Select Time or Something wrongs")
-                return
-            }
-        }
-        let res = await saveBulkScheduleDoctor({
-            arrSchedule: result,
-            doctorId: selectedDoctor.value,
-            formatedDate: '' + formatedDate
-        })
-        if (res && res.errCode === 0) {
-            if (language === LANGUAGE.VI) {
-                toast.success("Lưu lịch Thành Công")
-            } else {
-                toast.success("Save Info Success")
-            }
+    handleChangeInput = () => {
+        let { listSchedule, isSelectedAll } = this.state;
+        if (!isSelectedAll) {
+            listSchedule.map((item) => (item.isSelected = true));
         } else {
-            toast.error("Error Your save Fail")
+            listSchedule.map((item) => (item.isSelected = false));
         }
-    }
+        this.setState({
+            isSelectedAll: !this.state.isSelectedAll,
+            listSchedule: listSchedule,
+        });
+    };
+    // change doctor:
+    handleChange = async (selectedDoctor) => {
+        await this.props.getScheduleDoctorByDateRedux(selectedDoctor.value, this.state.initDate);
+        this.setState({
+            selectedDoctor: selectedDoctor,
+            scheduleDoctorCurrent: this.props.scheduleDoctorCurrentRedux,
+        });
+    };
+
+    buildInputSelect = (data) => {
+        let result = [];
+        if (data && data.length > 0) {
+            result = data.map((item) => {
+                let object = {};
+                let labelVi = `${item.firstName} ${item.lastName}`;
+                let labelEn = `${item.lastName} ${item.firstName}`;
+                object.label = this.props.languageRedux === LANGUAGES.VI ? labelVi : labelEn;
+                object.value = item.id;
+                return object;
+            });
+        }
+        return result;
+    };
+
+    handleSetDate = async (date) => {
+        let { selectedDoctor } = this.state;
+        let { roleId } = this.props;
+        if (!_.isEmpty(selectedDoctor) && roleId === 'R1') {
+            await this.props.getScheduleDoctorByDateRedux(selectedDoctor.value, date.setHours(0, 0, 0, 0));
+        } else if (selectedDoctor) {
+            await this.props.getScheduleDoctorByDateRedux(selectedDoctor, date.setHours(0, 0, 0, 0));
+        }
+        this.setState({
+            initDate: date.setHours(0, 0, 0, 0),
+            isSelectedAll: false,
+        });
+    };
+    handleClickRange = (rangeTime) => {
+        let { listSchedule } = this.state;
+        if (listSchedule && listSchedule.length > 0) {
+            listSchedule.map((item) => {
+                if (rangeTime.id === item.id) {
+                    item.isSelected = !item.isSelected;
+                }
+                return item;
+            });
+            this.setState({
+                listSchedule: listSchedule,
+            });
+        }
+    };
+
+    handleClickSaveSchedule = () => {
+        let { listSchedule, selectedDoctor, initDate } = this.state;
+        let arrResult = [];
+        listSchedule.forEach((item) => {
+            let object = {};
+            if (item.isSelected === true) {
+                object.doctorId = selectedDoctor.value;
+                object.date = initDate;
+                object.timeType = item.keyMap;
+                return arrResult.push(object);
+            }
+        });
+        if (this.props.roleId === 'R2') {
+            this.props.saveScheduleDoctorRedux({
+                arrSchedule: arrResult,
+                date: initDate,
+            });
+        } else {
+            if (!selectedDoctor && _.isEmpty(selectedDoctor)) {
+                toast.warning('Select doctor');
+                return;
+            }
+            if (arrResult && arrResult.length > 0) {
+                this.props.saveScheduleDoctorRedux({
+                    arrSchedule: arrResult,
+                    doctorId: selectedDoctor.value,
+                    date: initDate,
+                });
+            } else {
+                toast.warning('Missing information range date');
+            }
+        }
+    };
 
     render() {
-        let {rangeTime} = this.state
-        let {language} = this.props
-        let yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
+        let { allDoctor, initDate, listSchedule, isSelectedAll } = this.state;
+        let { languageRedux, roleId } = this.props;
+
         return (
-            <div className='manage-schedule-container'>
-                <div className='title'>
-                    <FormattedMessage id='manage-schedule.title'/>
+            <div className="manage-schedule-container">
+                <div className="title">
+                    <h2>
+                        <FormattedMessage id="schedule.title" />
+                    </h2>
                 </div>
-                <div className='container'>
-                    <div className='row'>
-                        <div className='col-6 form-group'>
-                            <label><FormattedMessage id='manage-schedule.choose-doctor'/></label>
-                            <Select
-                                value={this.state.selectedDoctor}
-                                onChange={this.handleChangeSelect}
-                                // options={options}
-                                options={this.state.listDoctors}
-                            />
-                        </div>
-                        <div className='col-6 form-group'>
-                            <label><FormattedMessage id='manage-schedule.choose-date'/></label>
+                <div className="wrapper">
+                    <div className="form-row">
+                        {roleId === 'R1' && (
+                            <div className="form-group col-md-4">
+                                <label>
+                                    <FormattedMessage id="schedule.chooseDoctor" />
+                                </label>
+                                <Select onChange={(e) => this.handleChange(e)} options={allDoctor} />
+                            </div>
+                        )}
+                        <div className="form-group col-md-2">
+                            <label>
+                                <FormattedMessage id="schedule.chooseDate" />
+                            </label>
+
                             <DatePicker
-                                onChange={this.handleOnchangeDatePicker}
-                                className='form-control'
-                                value={this.state.currentDate}
-                                // minDate={ new Date().setHours(0,0,0,0)}
-                                minDate={yesterday}
+                                dateFormat="dd/MM/yyyy"
+                                className="form-control"
+                                selected={initDate}
+                                onChange={(date) => this.handleSetDate(date)}
+                                minDate={new Date()}
                             />
-                        </div>
-                        <div className='col-12 pick-hour-container'>
-                            {rangeTime && rangeTime.length > 0 && rangeTime.map((item, index) => {
-                                return (
-                                    <button
-                                        className={item.isSelected === true ? 'btn btn-schedule active' : 'btn btn-schedule'}
-                                        key={index}
-                                        onClick={() => {
-                                            this.handleClickBtnTime(item)
-                                        }}
-                                    >
-                                        {language === LANGUAGE.VI ? item.valueVi : item.valueEn}
-                                    </button>
-                                )
-                            })}
-                        </div>
-                        <div className='col-12 '>
-                            <button className='btn btn-primary btn-save-schedule'
-                                    onClick={() => {
-                                        this.handleSaveSchedule()
-                                    }}
-                            >
-                                < FormattedMessage id="manage-schedule.save"/>
-                            </button>
                         </div>
                     </div>
+                    <div className="inputSelectAll">
+                        <div
+                            className={isSelectedAll ? 'selectedAll active' : 'selectedAll'}
+                            onClick={() => this.handleChangeInput()}
+                        >
+                            <p>Chọn tất cả</p>
+                            {isSelectedAll && <IoCheckboxOutline />}
+                        </div>
+                    </div>
+                    <div className="col-12 schedule-container">
+                        {listSchedule.map((range) => {
+                            return (
+                                <div
+                                    key={range.id}
+                                    className={range.isSelected ? 'range-time selected' : 'range-time'}
+                                    onClick={() => {
+                                        this.handleClickRange(range);
+                                    }}
+                                >
+                                    {languageRedux === LANGUAGES.EN ? range.valueEn : range.valueVi}
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <button className="btn btn-primary btn-saveSchedule" onClick={() => this.handleClickSaveSchedule()}>
+                        <FormattedMessage id="schedule.save" />
+                    </button>
                 </div>
             </div>
         );
     }
-
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
+        roleId: state.user.roleId,
+        userInfo: state.user.userInfo,
         isLoggedIn: state.user.isLoggedIn,
-        allDoctors: state.admin.allDoctors,
-        language: state.app.language,
-        allScheduleTime: state.admin.allScheduleTime
+        allDoctorRedux: state.doctor.allDoctor,
+        languageRedux: state.app.language,
+        scheduleRedux: state.doctor.schedule,
+        scheduleDoctorCurrentRedux: state.doctor.scheduleDoctorCurrent,
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {
-        fetchAllDoctor: () => dispatch(actions.fetchAllDoctor()),
-        fetchAllScheduleTime: () => dispatch(actions.fetchAllScheduleTime())
+        fetchAllDoctorRedux: () => dispatch(actions.fetchAllDoctor()),
+        fetchAllcodeScheduleRedux: () => dispatch(actions.fetchAllcodeSchedule()),
+        saveScheduleDoctorRedux: (data) => dispatch(actions.saveScheduleDoctor(data)),
+        getScheduleDoctorByDateRedux: (doctorId, date) => dispatch(actions.getScheduleDoctorByDate(doctorId, date)),
     };
 };
 

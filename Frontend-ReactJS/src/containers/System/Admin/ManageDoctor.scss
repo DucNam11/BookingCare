@@ -1,28 +1,33 @@
 .manage-doctor-container {
-  .manage-doctor-title {
-    padding: 10px 0;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-  }
-
-  .more-doctor-info {
-    display: flex;
-    gap: 10px;
-    padding: 0 10px 5px;
-
-    .content-left {
-      width: 35%;
+    & .wrapper-manager-doctor {
+        width: 80%;
+        margin: 0px auto;
+        & .manage-doctor-title {
+            text-transform: uppercase;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+        }
+        & .container-infor-doctor {
+            width: 100%;
+        }
+        & .manage-doctor-editor {
+            margin-top: 20px;
+            margin-left: -5px;
+            margin-right: -5px;
+            & .title-editor {
+                margin-bottom: 5px;
+            }
+        }
+        & .container_btn {
+            display: flex;
+            justify-content: flex-end;
+            & .btn-primary {
+                margin: 50px;
+            }
+            & .btn-warning {
+                margin: 50px;
+            }
+        }
     }
-
-    .content-right {
-      width: 65%;
-    }
-  }
-
-  .more-info-extra-row {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 20px 0;
-  }
 }
