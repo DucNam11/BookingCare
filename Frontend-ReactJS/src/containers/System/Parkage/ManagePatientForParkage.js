@@ -171,7 +171,7 @@ class ManagePatientForParkage extends Component {
                                     value={this.state.selectedParkage}
                                     onChange={this.handleChange}
                                     options={this.state.listParkages}
-                                    placeholder={'Chọn Gói khám'}
+                                    placeholder={'Chọn gói khám'}
                                 />
                             </div>
                             <div className='col-12 table-manage-patient'>

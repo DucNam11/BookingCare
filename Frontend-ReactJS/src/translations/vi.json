@@ -52,11 +52,12 @@
     "phonenumber": "Số Điện Thoại",
     "address": "Địa chỉ",
     "gender": "Giới tính",
-    "position": "Chức Danh",
-    "roleid": "roleid",
+    "position": "Chức danh",
+    "roleid": "Vị trí",
     "image": "Hình ảnh",
     "edit": "SỬA",
-    "save": "LƯU"
+    "save": "LƯU",
+    "uploadImage": "Tải ảnh"
   },
   "homepage": {
     "outstanding-doctor": "Bác Sĩ Nổi Bật",

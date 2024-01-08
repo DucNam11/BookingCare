@@ -54,7 +54,7 @@ class DetailHandbook extends Component {
                 {/* <HomeHeader /> */}
                 <div className="handbook-container coverArea">
                     <div className="handbook-wrapper">
-                        <h1 className="handbook-title">{handbookData.name}</h1>
+                        <h1 className="handbook-title">{handbookData.title}</h1>
                         <div className="handbook-detail-info">
                             <li>Nhóm tác giả:&nbsp;{handbookData.authors}</li>
                             <li>Người kiểm duyệt:&nbsp;{`${positionSender} ${nameSender}`}</li>

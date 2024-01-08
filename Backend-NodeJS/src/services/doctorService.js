@@ -388,7 +388,7 @@ let getListPatientForDoctor = (doctorId, date) => {
 let sendRemedy = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.doctorId || !data.patienId || !data.timeType || !data.email) {
+            if (!data.doctorId || !data.patientId || !data.timeType || !data.email) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing Parameter"
@@ -398,7 +398,7 @@ let sendRemedy = (data) => {
                 let appointment = await db.Booking.findOne({
                     where: {
                         doctorId: data.doctorId,
-                        patientId: data.patienId,
+                        patientId: data.patientId,
                         timeType: data.timeType,
                         statusId: 'S2'
                     },
@@ -411,7 +411,7 @@ let sendRemedy = (data) => {
                         }, {
                         where: {
                             doctorId: data.doctorId,
-                            patientId: data.patienId,
+                            patientId: data.patientId,
                             timeType: data.timeType,
                             statusId: 'S2'
                         }

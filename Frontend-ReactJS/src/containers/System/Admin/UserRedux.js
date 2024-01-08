@@ -240,7 +240,7 @@ class UserRedux extends Component {
                                 <label><FormattedMessage id="manage-user.phonenumber"/></label>
                                 <input className='form-control' type='text'
                                        value={this.state.phoneNumber}
-                                       name='phonenumber'
+                                       name='phoneNumber'
                                        onChange={(event) => {
                                            this.onChangeInput(event, 'phoneNumber')
                                        }}/>
@@ -249,7 +249,7 @@ class UserRedux extends Component {
                                 <label><FormattedMessage id="manage-user.address"/></label>
                                 <input className='form-control' type='text'
                                        value={this.state.address}
-                                       name='address'
+                                       name='Address'
                                        onChange={(event) => {
                                            this.onChangeInput(event, 'address')
                                        }}/>
@@ -282,7 +282,7 @@ class UserRedux extends Component {
                                     })}
                                 </select>
                             </div>
-                            < div className='col-3'>
+                            <div className='col-3'>
                                 <label><FormattedMessage id="manage-user.roleid"/></label>
                                 <select className="form-control" value={this.state.role} onChange={(event) => {
                                     this.onChangeInput(event, 'role')
@@ -296,7 +296,7 @@ class UserRedux extends Component {
                                     })}
                                 </select>
                             </div>
-                            < div className='col-3'>
+                            <div className='col-3'>
                                 <label><FormattedMessage id="manage-user.image"/></label>
                                 <div className='preview-image-container'>
                                     <input className='form-control' id='previewImg' type='file' hidden

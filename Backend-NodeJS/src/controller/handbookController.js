@@ -2,7 +2,9 @@ import handbookService from '../services/handbookService'
 
 let createNewHandbook = async (req, res) => {
     try {
-        let data = await handbookService.createNewHandbook(req.body)
+        let data = req.body
+        let accessToken = req.headers.accesstoken;
+        let res = await handbookService.createNewHandbook(req.body, accessToken)
         return res.status(200).json(data)
     } catch (error) {
         return res.status(200).json({
@@ -24,7 +26,8 @@ let getAllHandbook = async (req, res) => {
 }
 let getDetailhandbookById = async (req, res) => {
     try {
-        let data = await handbookService.getDetailhandbookById(req.query.id)
+        let { id, type, statusId } = req.query;
+        let data = await handbookService.getDetailhandbookById(id, type, statusId)
         return res.status(200).json(data)
     } catch (error) {
         return res.status(200).json({
@@ -66,11 +69,29 @@ let editHandbookById = async (req, res) => {
     }
 }
 
+let confirmHandbook = async (req, res) => {
+    try {
+        let accessToken = req.headers.accesstoken;
+        let id = req.query.id;
+        let response = await handbookService.confirmHandbookServices(id, accessToken);
+        if (response) {
+            return res.status(200).json(response);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            errorCode: 1,
+            message: 'Error in server...',
+        });
+    }
+};
+
 module.exports = {
     createNewHandbook: createNewHandbook,
     getAllHandbook: getAllHandbook,
     getDetailhandbookById: getDetailhandbookById,
     deleteHandbookById: deleteHandbookById,
-    editHandbookById: editHandbookById
+    editHandbookById: editHandbookById,
+    confirmHandbook: confirmHandbook
 
 }

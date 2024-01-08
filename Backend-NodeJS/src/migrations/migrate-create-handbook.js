@@ -12,6 +12,21 @@ module.exports = {
             name: {
                 type: Sequelize.STRING
             },
+            statusId: {
+                type: Sequelize.STRING,
+            },
+            authors: {
+                type: Sequelize.STRING,
+            },
+            senderId: {
+                type: Sequelize.INTEGER,
+            },
+            censor: {
+                type: Sequelize.INTEGER,
+            },
+            adviser: {
+                type: Sequelize.STRING,
+            },
             image: {
                 type: Sequelize.BLOB('long')
             },
@@ -21,10 +36,6 @@ module.exports = {
             },
             contentMarkdown: {
                 type: Sequelize.TEXT('long'),
-                allowNull: true,
-            },
-            userId: {
-                type: Sequelize.INTEGER,
                 allowNull: true,
             },
             createdAt: {

@@ -1,0 +1,20 @@
+.handbook_container {
+  position: relative;
+  & .handbook-title {
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+    font-weight: 600;
+    font-size: 17px;
+    padding: 20px;
+  }
+  & .wrapper-handbook {
+    margin-top: 30px;
+  }
+  & .container_btn {
+    display: flex;
+    align-items: center;
+    padding: 50px 0;
+    justify-content: flex-end;
+  }
+}

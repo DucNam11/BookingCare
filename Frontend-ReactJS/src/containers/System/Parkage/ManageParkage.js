@@ -59,7 +59,7 @@ class ManageParkage extends Component {
 
     async componentDidMount() {
         this.props.getAllRequiredDoctorInfo()
-        this.getAllParkage_()
+        await this.getAllParkage()
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -345,7 +345,7 @@ class ManageParkage extends Component {
                         ></textarea>
                     </div>
                     <div className='col-4 form-group'>
-                        <label>ảnh Thumbnail</label>
+                        <label>Ảnh thumbnail</label>
                         <input
                             className='form-control' id='previewImg'
                             onChange={(event) => {

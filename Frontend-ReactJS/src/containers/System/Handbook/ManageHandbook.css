@@ -1,1 +1,22 @@
+.handbook_container {
+  position: relative;
+}
+.handbook_container .handbook-title {
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0;
+  font-weight: 600;
+  font-size: 17px;
+  padding: 20px;
+}
+.handbook_container .wrapper-handbook {
+  margin-top: 30px;
+}
+.handbook_container .container_btn {
+  display: flex;
+  align-items: center;
+  padding: 50px 0;
+  justify-content: flex-end;
+}
+
 /*# sourceMappingURL=ManageHandbook.css.map */

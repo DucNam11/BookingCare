@@ -11,15 +11,19 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Handbook.belongsTo(models.User, { foreignKey: 'userId' })
+            Handbook.belongsTo(models.User, { foreignKey: 'senderId', targetKey: 'id', as: 'senderData' })
         }
     }
     Handbook.init({
         name: DataTypes.STRING,
+        authors: DataTypes.STRING,
+        statusId: DataTypes.STRING,
+        senderId: DataTypes.INTEGER,
+        censor: DataTypes.INTEGER,
+        adviser: DataTypes.STRING,
         image: DataTypes.TEXT,
         contentHTML: DataTypes.TEXT('long'),
         contentMarkdown: DataTypes.TEXT('long'),
-        userId: DataTypes.INTEGER,
     }, {
         sequelize,
         modelName: 'Handbook',

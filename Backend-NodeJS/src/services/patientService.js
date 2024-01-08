@@ -59,18 +59,18 @@ let postBookAppointment = (data) => {
                         gender: data.selectedGender,
                         address: data.address,
                         firstName: data.fullName,
-                        phonenumber: data.phoneNumber
+                        phoneNumber: data.phoneNumber
                     }
                 })
                 if (user && user[0]) {
 
                     await db.Booking.findOrCreate({
                         // where: { patientId: user[0].id },
-                        where: { patienId: user[0].id, statusId: ['S1', 'S2'] },
+                        where: { patientId: user[0].id, statusId: ['S1', 'S2'] },
                         defaults: {
                             statusId: 'S1',
                             doctorId: data.doctorId,
-                            patienId: user[0].id,
+                            patientId: user[0].id,
                             date: data.date,
                             timeType: data.timeType,
                             reason: data.reason,
@@ -160,17 +160,17 @@ let postBookAppointmentParkage = (data) => {
                         gender: data.selectedGender,
                         address: data.address,
                         firstName: data.fullName,
-                        phonenumber: data.phoneNumber,
+                        phoneNumber: data.phoneNumber,
                     }
                 })
                 if (user && user[0]) {
                     await db.Booking.findOrCreate({
                         // where: { patientId: user[0].id },
-                        where: { patienId: user[0].id, statusId: ['S1', 'S2'] },
+                        where: { patientId: user[0].id, statusId: ['S1', 'S2'] },
                         defaults: {
                             statusId: 'S1',
                             parkageId: data.parkageId,
-                            patienId: user[0].id,
+                            patientId: user[0].id,
                             date: data.date,
                             timeType: data.timeType,
                             reason: data.reason,

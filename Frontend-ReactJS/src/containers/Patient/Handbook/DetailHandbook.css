@@ -1,13 +1,22 @@
-.detail-handbook-body {
-  padding: 30px 100px;
-  background: #eee;
-  display: flex;
-  flex-direction: column;
-  font-size: 25px;
+.handbook-container {
+  padding-top: 75px;
 }
-
-.markdown-handbook {
-  padding: 30px 100px;
+.handbook-container .handbook-wrapper {
+  margin-top: 20px;
+}
+.handbook-container .handbook-wrapper .handbook-detail-info li {
+  padding-bottom: 4px;
+}
+.handbook-container .handbook-wrapper .detail-clinic {
+  background-color: var(--color-background-handbook);
+  padding: 20px 50px;
+  border-radius: 4px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+.handbook-container .handbook-wrapper .detail-clinic img {
+  width: 100%;
+  object-fit: cover;
 }
 
 /*# sourceMappingURL=DetailHandbook.css.map */

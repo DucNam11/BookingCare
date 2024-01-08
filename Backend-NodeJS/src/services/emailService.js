@@ -5,8 +5,8 @@ require('dotenv').config()
 let sendEmailBooking = async (dataSend) => {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
-        port: 587,
-        secure: false, // true for 465, false for other ports
+        port: 456,
+        secure: true, // true for 465, false for other ports
         auth: {
             user: process.env.EMAIL_APP, // generated ethereal user
             pass: process.env.APP_APP_PASSWORD, // generated ethereal password
@@ -75,8 +75,8 @@ let sendAttachment = async (dataSend) => {
         try {
             let transporter = nodemailer.createTransport({
                 host: "smtp.gmail.com",
-                port: 587,
-                secure: false, // true for 465, false for other ports
+                port: 456,
+                secure: true, // true for 465, false for other ports
                 auth: {
                     user: process.env.EMAIL_APP, // generated ethereal user
                     pass: process.env.APP_APP_PASSWORD, // generated ethereal password

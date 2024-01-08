@@ -69,6 +69,7 @@ let initWebRoute = (app) => {
     router.get('/api/get-all-handbook', handbookController.getAllHandbook)
     router.post('/api/create-new-handbook', handbookController.createNewHandbook)
     router.get('/api/get-handbook-by-id', handbookController.getDetailhandbookById)
+    router.post('/api/confirm-handbook', handbookController.confirmHandbook);
     router.delete('/api/delete-handbook-by-id', handbookController.deleteHandbookById)
     router.put('/api/edit-handbook-by-id', handbookController.editHandbookById)
 

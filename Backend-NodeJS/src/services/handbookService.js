@@ -1,17 +1,32 @@
-import _ from "lodash";
 import db from "../models/index";
+import jwt from 'jsonwebtoken';
 
 
-let createNewHandbook = (data) => {
+let createNewHandbook = (data, accessToken) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.contentHTML || !data.contentMarkdown || !data.name || !data.imageBase64) {
+            if (!data.contentHTML || !data.authors || !data.contentMarkdown || !data.name || !data.imageBase64) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing Parameter"
                 })
             } else {
+                let senderId = '';
+                if (accessToken) {
+                    jwt.verify(accessToken, process.env.KEY_SECRET_ACCESS_TOKEN, (err, payload) => {
+                        if (err) {
+                            resolve({ errorCode: 1, message: 'Token is not valid' });
+                        }
+                        senderId = payload.id;
+                    });
+                } else {
+                    resolve({ errorCode: 1, message: 'You are not authenticated' });
+                }
                 await db.Handbook.create({
+                    senderId: senderId,
+                    statusId: 'S1',
+                    authors: data.authors,
+                    adviser: data.adviser,
                     name: data.name,
                     contentHTML: data.contentHTML,
                     contentMarkdown: data.contentMarkdown,
@@ -28,6 +43,36 @@ let createNewHandbook = (data) => {
         }
     })
 }
+
+let confirmHandbookServices = (id, accessToken) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let censorId = '';
+            if (accessToken) {
+                jwt.verify(accessToken, process.env.KEY_SECRET_ACCESS_TOKEN, (err, payload) => {
+                    if (err) {
+                        resolve({ errorCode: 1, message: 'Token is not valid' });
+                    }
+                    censorId = payload.id;
+                });
+            } else {
+                resolve({ errorCode: 1, message: 'You are not authenticated' });
+            }
+            let handbook = await db.Handbook.findOne({
+                where: { id: id, statusId: 'S1' },
+            });
+            if (handbook) {
+                await handbook.update({ censor: censorId, statusId: 'S2' });
+                await handbook.save();
+                resolve({ errorCode: 0, message: 'Confirm success' });
+            } else {
+                resolve({ errorCode: 1, message: 'Not found handbook' });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
 let getAllHandbook = () => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -47,29 +92,71 @@ let getAllHandbook = () => {
         }
     })
 }
-let getDetailhandbookById = (inputId) => {
+let getDetailhandbookById = (id, type, statusId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputId) {
+            let data = {};
+            let dataAdviser = [];
+            if (!statusId) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing Parameter"
                 })
+            } else if ((id && type === 'detail') || id) {
+                data = await db.Handbook.findOne({
+                    where: {id: id},
+                    include: [
+                        {
+                            model: db.User,
+                            as: 'senderData',
+                            attributes: ['id', 'firstName', 'lastName', 'position'],
+                        },
+                    ],
+                    raw: true,
+                    nest: true,
+                })
+            }
+            let idAdvisers = data?.adviser?.split(',');
+            if (idAdvisers) {
+                data.adviserData = await Promise.all(
+                    idAdvisers.map(async (item) => {
+                        return await db.User.findOne({
+                            where: {id: item},
+                            attributes: ['firstName', 'lastName', 'position'],
+                            raw: true,
+                            nest: true,
+                        });
+                    }),
+                );
+            }
+            else if (type === 'manage' && statusId) {
+                data = await db.Handbook.findAll({
+                    where: { statusId: statusId },
+                    attributes: ['id', 'name', 'image', 'statusId'],
+                    include: [
+                        { model: db.User, as: 'senderData', attributes: ['id', 'firstName', 'lastName', 'position'] },
+                    ],
+                    raw: true,
+                    nest: true,
+                });
             } else {
-                let data = await db.Handbook.findOne({
-                    where: { id: inputId }
-                })
-                // if (data && data.length > 0) {
-                //     data.map(item => {
-                //         item.image = Buffer.from(item.image, 'base64').toString('binary')
-                //         return item
-                //     })
-                // }
+                //for api homepage
+                data = await db.Handbook.findAll({
+                    where: { statusId: 'S2' },
+                    attributes: ['id', 'name', 'image'],
+                    raw: true,
+                });
+            }
+            if (data) {
                 resolve({
-                    errCode: 0,
-                    errMessage: "Success",
-                    data: data
-                })
+                    errorCode: 0,
+                    data: data,
+                });
+            } else {
+                resolve({
+                    errorCode: 1,
+                    message: 'Not found handbook',
+                });
             }
         } catch (error) {
             reject(error)
@@ -85,7 +172,7 @@ let deleteHandbookById = (id) => {
             if (!handbook) {
                 resolve({
                     errCode: 1,
-                    errMessage: "handbook does not exist"
+                    errMessage: "Handbook does not exist"
                 })
             } else {
                 await db.Handbook.destroy({
@@ -116,6 +203,8 @@ let editHandbookById = (data) => {
                 if (handbook) {
                     await db.Handbook.update({
                         name: data.name,
+                        authors: data.authors,
+                        adviser: data.adviser,
                         contentHTML: data.contentHTML,
                         contentMarkdown: data.contentMarkdown,
                         image: data.imageBase64
@@ -138,5 +227,6 @@ module.exports = {
     getDetailhandbookById: getDetailhandbookById,
     deleteHandbookById: deleteHandbookById,
     editHandbookById: editHandbookById,
+    confirmHandbookServices: confirmHandbookServices
 
 }
