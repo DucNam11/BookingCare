@@ -1,42 +1,46 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-import { FormattedMessage } from 'react-intl';
+import '../HomePage.scss';
 
 
 class About extends Component {
 
     render() {
+
         return (
             <div className='section-share section-about'>
+
                 <div className='section-about-header'>
-                    Mixigang Number One
+                    Truyền Thông Nói Về Booking Care
                 </div>
                 <div className='section-about-content'>
                     <div className='content-left'>
-                        <iframe width="100%" height="400px" src="https://www.youtube.com/embed/bk7u2A0ZZxg"
-                            title="(Restream) Tuổi thơ &quot;Báo Đời&quot; của Độ Tày và chuyện mua Z1000 tặng sinh nhật vợ."
-                            frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+                        <iframe width="530" height="320"
+                            src="https://www.youtube.com/embed/jh5U5BnpGN8"
+                            title="The Future of Healthcare" frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen>
+
+                        </iframe>
                     </div>
                     <div className='content-right'>
-                        <p>(Restream) Tuổi thơ "Báo Đời" của Độ Tày và chuyện mua Z1000 tặng sinh nhật vợ.</p>
+
                     </div>
                 </div>
             </div>
-        );
-    }
+        )
 
+    }
 }
 
 const mapStateToProps = state => {
     return {
-        isLoggedIn: state.user.isLoggedIn
+        isLoggedIn: state.user.isLoggedIn,
     };
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-    };
+    return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(About);

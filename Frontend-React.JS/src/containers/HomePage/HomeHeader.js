@@ -1,16 +1,92 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions';
-import './HomeHeader';
 import './HomeHeader.scss';
-import logo from '../../assets/images/logo.svg';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../utils';
+import * as actions from '../../store/actions';
 import { changeLanguageApp } from '../../store/actions';
 import { withRouter } from 'react-router';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+import Select from 'react-select'
+import logo from '../../assets/images/logo.svg'
 
 class HomeHeader extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            dropdownOpen: false,
+            listClinic: [],
+            listSpecialty: [],
+            listDoctors: [],
+            selectedOption: '',
+        }
+    }
+
+    componentDidMount() {
+        this.props.getRequiredDoctorInfor()
+        this.props.fetchAllDoctors()
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.allDoctors !== this.props.allDoctors) {
+            let dataSelect = this.buildDataInputSelect(this.props.allDoctors, 'USERS')
+            this.setState({
+                listDoctors: dataSelect
+            })
+        }
+        if (prevProps.allRequiredDoctorInfor !== this.props.allRequiredDoctorInfor) {
+            let { resSpecialty, resClinic } = this.props.allRequiredDoctorInfor
+            let dataSpecialty = this.buildDataInputSelect(resSpecialty, 'SPECIALTY')
+            let dataClinic = this.buildDataInputSelect(resClinic, 'CLINIC')
+            this.setState({
+                listSpecialty: dataSpecialty,
+                listClinic: dataClinic
+            })
+        }
+    }
+
+    buildDataInputSelect = (inputData, type) => {
+        let result = []
+        let language = this.props.language
+        if (inputData && inputData.length > 0) {
+            if (type === 'USERS') {
+                inputData.map((item) => {
+                    let object = {};
+                    let labelVi = `${item.firstName} ${item.lastName}`
+                    let labelEn = `${item.lastName} ${item.firstName}`
+                    object.label = language === LANGUAGES.VI ? labelVi : labelEn
+                    object.value = item.id
+                    object.type = 'USERS'
+                    object.image = item.image
+                    result.push(object)
+                })
+            }
+            if (type === 'SPECIALTY') {
+                inputData.map((item) => {
+                    let object = {};
+                    object.label = item.name
+                    object.value = item.id
+                    object.image = item.image
+                    object.type = 'SPECIALTY'
+                    result.push(object)
+                })
+            }
+            if (type === 'CLINIC') {
+                inputData.map((item) => {
+                    let object = {};
+                    object.label = item.name
+                    object.value = item.id
+                    object.image = item.image
+                    object.type = 'CLINIC'
+                    result.push(object)
+                })
+            }
+
+        }
+        return result
+    }
+
 
     changeLanguage = (language) => {
         this.props.changeLanguageAppRedux(language)
@@ -21,8 +97,37 @@ class HomeHeader extends Component {
             this.props.history.push(`/home`)
         }
     }
+
+    handleChange = (selectedOption) => {
+        if (selectedOption.type === 'SPECIALTY') {
+            this.props.history.push(`/detail-specialty/${selectedOption.value}`)
+        }
+        if (selectedOption.type === 'CLINIC') {
+            this.props.history.push(`/detail-clinic/${selectedOption.value}`)
+        }
+        if (selectedOption.type === 'USERS') {
+            this.props.history.push(`/detail-doctor/${selectedOption.value}`)
+        }
+    }
+
     render() {
+        console.log('checkk', this.props)
         let language = this.props.language;
+        let { dropdownOpen, selectedOption, listSpecialty, listClinic, listDoctors } = this.state
+        const groupedOptions = [
+            {
+                label: <FormattedMessage id='homeheader.speciality' />,
+                options: listSpecialty,
+            },
+            {
+                label: <FormattedMessage id='homeheader.health-facility' />,
+                options: listClinic
+            },
+            {
+                label: <FormattedMessage id='homeheader.doctor' />,
+                options: listDoctors
+            }
+        ];
         return (
             <React.Fragment>
                 <div className="home-header-container">
@@ -73,7 +178,14 @@ class HomeHeader extends Component {
                             <div className='title2'><FormattedMessage id="banner.title2"></FormattedMessage></div>
                             <div className='search'>
                                 <i className='fas fa-search'></i>
-                                <input type='text' placeholder='Tìm chuyên khoa khám bênh'></input>
+                                <Select
+                                    value={selectedOption}
+                                    onChange={this.handleChange}
+                                    options={groupedOptions}
+                                    placeholder={'Search'}
+                                    isSearchable={true}
+                                    isLoading={true}
+                                />
                             </div>
                         </div>
                         <div className='content-down'>
@@ -119,6 +231,8 @@ const mapStateToProps = state => {
         isLoggedIn: state.user.isLoggedIn,
         userInfo: state.user.userInfo,
         language: state.app.language,
+        allRequiredDoctorInfor: state.admin.allRequiredDoctorInfor,
+        allDoctors: state.admin.allDoctors,
     };
 };
 
@@ -126,6 +240,8 @@ const mapDispatchToProps = dispatch => {
     return {
         changeLanguageAppRedux: (language) => dispatch(changeLanguageApp(language)),
         processLogout: () => dispatch(actions.processLogout()),
+        getRequiredDoctorInfor: () => dispatch(actions.getRequiredDoctorInfor()),
+        fetchAllDoctors: () => dispatch(actions.fetchAllDoctors()),
     };
 };
 
