@@ -449,15 +449,15 @@ let getListPatientHistoryForDoctor = (doctorId, date) => {
                     errMessage: "Missing required params"
                 })
             } else {
-                let data = await db.Booking.findAll({
+                let data = await db.History.findAll({
                     where: {
-                        statusId: 'S3',
+                        // statusId: 'S3',
                         doctorId: doctorId,
                         date: date
                     },
                     include: [
                         {
-                            model: db.User, as: 'patientData',
+                            model: db.User, as: 'HistoryData',
                             attributes:
                                 ['email', 'firstName', 'address', 'gender']
                             ,
@@ -466,7 +466,7 @@ let getListPatientHistoryForDoctor = (doctorId, date) => {
                             ]
                         },
                         {
-                            model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi']
+                            model: db.Allcode, as: 'timeTypeDataHistory', attributes: ['valueEn', 'valueVi']
                         }
                     ],
                     raw: false,
@@ -511,7 +511,16 @@ let sendRemedy = (data) => {
                 }
 
                 //send email remedy
-                await emailService.sendAttachment(data);
+                let files = await emailService.sendAttachment(data);
+                if (files) {
+                    await db.History.create({
+                        patientId: data.patientId,
+                        doctorId: data.doctorId,
+                        date: appointment.date,
+                        timeType: data.timeType,
+                        files: files,
+                    })
+                }
 
                 resolve({
                     errCode: 0,

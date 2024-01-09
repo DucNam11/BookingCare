@@ -103,13 +103,23 @@ let sendAttachment = async (dataSend) => {
                 html: getBodyHTMLEmailRemedy(dataSend),
                 attachments: [
                     {
-                        filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.png`,
-                        content: dataSend.imgBase64.split('base64,')[1],
-                        encoding: 'base64'
+                        // filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.png`,
+                        // content: dataSend.imgBase64.split('base64,')[1],
+                        // encoding: 'base64'
+                        filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.pdf`,
+                        path: dataSend.imgBase64
                     }
                 ],
+                // attachments: [
+                //     {
+                //         filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.png`,
+                //         content: dataSend.imgBase64.split('base64,')[1],
+                //         encoding: 'base64'
+
+                //     }
+                // ],
             });
-            resolve()
+            resolve(dataSend.imgBase64)
 
 
         } catch (e) {

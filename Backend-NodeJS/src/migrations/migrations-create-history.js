@@ -15,11 +15,14 @@ module.exports = {
             doctorId: {
                 type: Sequelize.INTEGER
             },
-            description: {
-                type: Sequelize.TEXT
+            date: {
+                type: Sequelize.STRING
+            },
+            timeType: {
+                type: Sequelize.STRING
             },
             files: {
-                type: Sequelize.TEXT
+                type: Sequelize.BLOB('long')
             },
             createdAt: {
                 allowNull: false,

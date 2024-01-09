@@ -20,12 +20,36 @@ class ManageHistory extends Component {
             isOpenRemedyModal: false,
             dataModal: [],
             isShowLoading: false,
+            pdfBlobUrls: {},
+            // pdfBlob: null,
+            // pdfUrl: '',
         }
     }
 
     async componentDidMount() {
 
         this.getDatePatient();
+        // let { user } = this.props;
+        // let { currentDate } = this.state;
+        // let formatedDate = new Date(currentDate).getTime();
+        // try {
+        //     // Gửi yêu cầu tới API để nhận dữ liệu Blob
+        //     const response = await fetch(getAllPatientHistoryForDoctor({
+        //         doctorId: user.id,
+        //         date: formatedDate
+        //     }));
+        //     const blob = await response.blob();
+
+        //     // Tạo URL cho Blob nhận được
+        //     const pdfUrl = URL.createObjectURL(blob);
+
+        //     this.setState({
+        //         pdfBlob: blob,
+        //         pdfUrl: pdfUrl
+        //     });
+        // } catch (error) {
+        //     console.error('Error fetching or loading PDF:', error);
+        // }
 
     }
 
@@ -38,10 +62,24 @@ class ManageHistory extends Component {
             date: formatedDate
         })
         if (res && res.errCode === 0) {
+            let pdfBlobUrls = {};
+            for (let item of res.data) {
+                if (item.files) {
+                    const blob = new Blob([item.files]);
+                    const pdfUrl = URL.createObjectURL(blob);
+                    pdfBlobUrls[item.id] = pdfUrl;
+                }
+            }
             this.setState({
-                dataPatient: res.data
+                dataPatient: res.data,
+                pdfBlobUrls: pdfBlobUrls, // Cập nhật trạng thái mới
             })
+            // this.setState({
+            //     dataPatient: res.data
+            // })
         }
+
+
     }
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
@@ -64,9 +102,9 @@ class ManageHistory extends Component {
         let data = {
             doctorId: item.doctorId,
             patientId: item.patientId,
-            email: item.patientData.email,
+            email: item.HistoryData.email,
             timeType: item.timeType,
-            patientName: item.patientData.firstName,
+            patientName: item.HistoryData.firstName,
         }
         this.setState({
             isOpenRemedyModal: true,
@@ -118,7 +156,7 @@ class ManageHistory extends Component {
 
     render() {
 
-        let { dataPatient, isOpenRemedyModal, dataModal } = this.state;
+        let { dataPatient, isOpenRemedyModal, dataModal, pdfBlobUrls } = this.state;
         let { language } = this.props;
         console.log(dataPatient)
         return (
@@ -150,19 +188,34 @@ class ManageHistory extends Component {
                                             <th>Họ và tên</th>
                                             <th>Địa chỉ</th>
                                             <th>Giới tính</th>
+                                            <th>Kết quả khám bệnh</th>
 
                                         </tr>
                                         {dataPatient && dataPatient.length > 0 ?
                                             dataPatient.map((item, index) => {
-                                                let time = language === LANGUAGES.VI ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn;
-                                                let gender = language === LANGUAGES.VI ? item.patientData.genderData.valueVi : item.patientData.genderData.valueEn;
+                                                let time = language === LANGUAGES.VI ? item.timeTypeDataHistory.valueVi : item.timeTypeDataHistory.valueEn;
+                                                let gender = language === LANGUAGES.VI ? item.HistoryData.genderData.valueVi : item.HistoryData.genderData.valueEn;
                                                 return (
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
                                                         <td>{time}</td>
-                                                        <td>{item.patientData.firstName}</td>
-                                                        <td>{item.patientData.address}</td>
+                                                        <td>{item.HistoryData.firstName}</td>
+                                                        <td>{item.HistoryData.address}</td>
                                                         <td>{gender}</td>
+                                                        <td>
+                                                            {pdfBlobUrls[item.id] ? (
+                                                                <a
+                                                                    href={pdfBlobUrls[item.id]} // Sử dụng URL Blob đã tạo
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    download={`file_${index}.pdf`} // Tên file khi tải xuống
+                                                                >
+                                                                    Download File
+                                                                </a>
+                                                            ) : (
+                                                                <span>File not available</span>
+                                                            )}
+                                                        </td>
                                                     </tr>
 
                                                 )
