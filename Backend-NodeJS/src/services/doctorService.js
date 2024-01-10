@@ -536,6 +536,46 @@ let sendRemedy = (data) => {
     })
 }
 
+let getSpecialty = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required params"
+                })
+            } else {
+                //update patient status
+                let appointment = await db.Doctor_Infor.findOne({
+                    where: {
+                        doctorId: doctorId,
+                    },
+                    raw: false
+                })
+                if (appointment) {
+                    let specialty = await db.Specialty.findOne({
+                        where: {
+                            id: appointment.specialtyId,
+                        },
+                        raw: false
+                    })
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Ok',
+                        data: specialty
+                    })
+                }
+
+
+            }
+
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 
 
 module.exports = {
@@ -550,5 +590,5 @@ module.exports = {
     getListPatientForDoctor: getListPatientForDoctor,
     sendRemedy: sendRemedy,
     getListPatientHistoryForDoctor: getListPatientHistoryForDoctor,
-    
+    getSpecialty: getSpecialty,
 }
