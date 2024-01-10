@@ -194,6 +194,7 @@ class UserRedux extends Component {
         let language = this.props.language;
         let isGetGenders = this.props.isLoadingGender;
         let { email, password, firstName, lastName, phoneNumber, address, gender, position, role, avatar } = this.state;
+        console.log(this.state.previewImgURL)
         return (
             <div className='user-redux-container'>
                 <div className='title'>

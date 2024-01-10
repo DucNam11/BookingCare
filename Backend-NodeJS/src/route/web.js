@@ -41,6 +41,8 @@ let initWebRoutes = (app) => {
     router.get('/api/get-list-patient-history-for-doctor', doctorController.getListPatientHistoryForDoctor);
     router.post('/api/send-remedy', doctorController.sendRemedy);
 
+    
+
 
     router.post('/api/patient-book-appointment', patienController.postBookAppointment);
     router.post('/api/verify-book-appointment', patienController.postVerifyAppointment);
@@ -52,6 +54,7 @@ let initWebRoutes = (app) => {
     router.post('/api/create-new-clinic', clinicController.createClinic)
     router.get('/api/get-clinic', clinicController.getAllClinic)
     router.get('/api/get-detail-clinic-by-id', clinicController.getDetailClinicById)
+   
     return app.use("/", router);
 }
 

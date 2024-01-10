@@ -5,8 +5,10 @@ import * as actions from '../../../store/actions';
 import { LANGUAGES } from '../../../utils';
 import { FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router';
+import './List.scss';
+import HomeHeader from '../HomeHeader';
 
-class OutStandingDoctor extends Component {
+class ListDoctor extends Component {
 
     constructor(props) {
         super(props)
@@ -34,31 +36,21 @@ class OutStandingDoctor extends Component {
 
     }
 
-    returnList = () => {
-        if (this.props.history) {
-            this.props.history.push(`/list-doctor`)
-        }
-    }
-
     render() {
+
         let arrDoctors = this.state.arrDoctors;
         let { language } = this.props;
         return (
-            <div className='section-share section-outstanding-doctor'>
-                <div className='section-container'>
-                    <div className='section-header'>
-                        <span className='title-section'>
-                            <FormattedMessage id='homepage.outstanding-doctor' />
-                        </span>
-                        <button className='btn-section'
-                            onClick={() => this.returnList()}
-                        >
-                            <FormattedMessage id='homepage.more-infor' />
-                        </button>
-                    </div>
-                    <div className='section-body'>
-                        <Slider {...this.props.settings}>
-
+            <>
+                <HomeHeader></HomeHeader>
+                <div className='section-outstanding-doctor'>
+                    <div className='container'>
+                        <div className='section-header'>
+                            <span className='title-section'>
+                                DANH SÁCH BÁC SĨ
+                            </span>
+                        </div>
+                        <div className='body'>
                             {arrDoctors && arrDoctors.length > 0
                                 && arrDoctors.map((item, index) => {
                                     let imageBase64 = '';
@@ -87,11 +79,12 @@ class OutStandingDoctor extends Component {
                                     )
                                 })
                             }
-                        </Slider>
-                    </div>
+                        </div>
 
+                    </div>
                 </div>
-            </div>
+            </>
+
         );
     }
 
@@ -111,4 +104,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OutStandingDoctor));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListDoctor));

@@ -101,6 +101,8 @@ const postSendRemedy = (data) => {
 }
 
 
+
+
 export {
     handleLoginApi, getAllUsers,
     createNewUserService, deleteUserService,
@@ -115,6 +117,7 @@ export {
     getAllClinic, getAllDetailClinicById,
     getAllPatientForDoctor, postSendRemedy,
     getAllPatientHistoryForDoctor,
+ 
 
 }
 

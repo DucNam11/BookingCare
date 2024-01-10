@@ -2,6 +2,7 @@ import db from "../models/index"
 require('dotenv').config();
 import _ from 'lodash';
 
+
 let createClinic = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -90,8 +91,13 @@ let getDetailClinicById = (inputId) => {
     })
 }
 
+
+
+
 module.exports = {
     createClinic: createClinic,
     getAllClinic: getAllClinic,
     getDetailClinicById: getDetailClinicById,
+   
+
 }

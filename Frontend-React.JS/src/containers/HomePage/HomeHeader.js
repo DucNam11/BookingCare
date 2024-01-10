@@ -110,6 +110,24 @@ class HomeHeader extends Component {
         }
     }
 
+    returnSpecialty = () => {
+        if (this.props.history) {
+            this.props.history.push(`/list-specialty`)
+        }
+    }
+
+    returnDoctor = () => {
+        if (this.props.history) {
+            this.props.history.push(`/list-doctor`)
+        }
+    }
+
+    returnMedicalFacility = () => {
+        if (this.props.history) {
+            this.props.history.push(`/list-medical-facility`)
+        }
+    }
+
     render() {
         console.log('checkk', this.props)
         let language = this.props.language;
@@ -137,15 +155,21 @@ class HomeHeader extends Component {
                             <img className='header-logo' src={logo} onClick={() => this.returnToHome()}></img>
                         </div>
                         <div className='center-content'>
-                            <div className='child-content'>
+                            <div className='child-content'
+                                onClick={() => this.returnSpecialty()}
+                            >
                                 <div><b><FormattedMessage id="homeheader.speciality"></FormattedMessage></b></div>
                                 <div className='subs-title' ><FormattedMessage id="homeheader.searchdoctor"></FormattedMessage></div>
                             </div>
-                            <div className='child-content'>
+                            <div className='child-content'
+                                onClick={() => this.returnMedicalFacility()}
+                            >
                                 <div><b><FormattedMessage id="homeheader.health-facility"></FormattedMessage></b></div>
                                 <div className='subs-title' ><FormattedMessage id="homeheader.select-room"></FormattedMessage></div>
                             </div>
-                            <div className='child-content'>
+                            <div className='child-content'
+                                onClick={() => this.returnDoctor()}
+                            >
                                 <div><b><FormattedMessage id="homeheader.doctor"></FormattedMessage></b></div>
                                 <div className='subs-title' ><FormattedMessage id="homeheader.select-doctor"></FormattedMessage></div>
                             </div>

@@ -95,6 +95,7 @@ let sendAttachment = async (dataSend) => {
                     pass: process.env.EMAIL_APP_PASSWORD,
                 },
             });
+            const fileData = dataSend.imgBase64.split('base64,')[1];
 
             let info = await transporter.sendMail({
                 from: '"Hello " <danletuan03@gmail.com>', // sender address
@@ -107,7 +108,9 @@ let sendAttachment = async (dataSend) => {
                         // content: dataSend.imgBase64.split('base64,')[1],
                         // encoding: 'base64'
                         filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.pdf`,
-                        path: dataSend.imgBase64
+                        // path: dataSend.imgBase64
+                        content: fileData,
+                        encoding: 'base64'
                     }
                 ],
                 // attachments: [
@@ -119,7 +122,8 @@ let sendAttachment = async (dataSend) => {
                 //     }
                 // ],
             });
-            resolve(dataSend.imgBase64)
+
+            resolve(fileData)
 
 
         } catch (e) {

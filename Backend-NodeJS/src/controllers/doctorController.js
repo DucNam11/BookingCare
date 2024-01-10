@@ -157,6 +157,7 @@ let sendRemedy = async (req, res) => {
 
 
 
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
@@ -169,4 +170,5 @@ module.exports = {
     getListPatientForDoctor: getListPatientForDoctor,
     sendRemedy: sendRemedy,
     getListPatientHistoryForDoctor: getListPatientHistoryForDoctor,
+
 }

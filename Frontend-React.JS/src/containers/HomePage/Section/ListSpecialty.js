@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './Specialty.scss';
-import { FormattedMessage } from 'react-intl';
-import Slider from 'react-slick';
 import { getAllSpecialty } from '../../../services/userService';
 import { withRouter } from 'react-router';
+import HomeHeader from '../HomeHeader';
+import './List.scss';
 
 
-class Specialty extends Component {
+class ListSpecialty extends Component {
 
     constructor(props) {
         super(props);
@@ -30,31 +29,19 @@ class Specialty extends Component {
             this.props.history.push(`/detail-specialty/${item.id}`)
         }
     }
-
-    returnList = () => {
-        if (this.props.history) {
-            this.props.history.push(`/list-specialty`)
-        }
-    }
-
-
     render() {
         let { dataSpecialty } = this.state;
         return (
-            <div className="section-share section-specialty">
-                <div className="section-container">
-                    <div className="section-header">
-                        <span className="title-section">
-                            <FormattedMessage id="homepage.speciality-poplular" />
-                        </span>
-                        <button className="btn-section"
-                            onClick={() => this.returnList()}
-                        >
-                            <FormattedMessage id="homepage.more-infor" />
-                        </button>
-                    </div>
-                    <div className="section-body">
-                        <Slider {...this.props.settings}>
+            <>
+                <HomeHeader></HomeHeader>
+                <div className="section">
+                    <div className="container">
+                        <div className="section-header">
+                            <span className="title-section">
+                                DANH SÁCH CHUYÊN KHOA
+                            </span>
+                        </div>
+                        <div className="body">
                             {dataSpecialty && dataSpecialty.length > 0 &&
 
                                 dataSpecialty.map((item, index) => {
@@ -73,10 +60,11 @@ class Specialty extends Component {
                                         </div>
                                     );
                                 })}
-                        </Slider>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
+
         );
     }
 
@@ -93,4 +81,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Specialty));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListSpecialty));

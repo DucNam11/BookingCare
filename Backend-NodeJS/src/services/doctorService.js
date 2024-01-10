@@ -3,6 +3,7 @@ require('dotenv').config();
 import _ from 'lodash';
 import emailService from '../services/emailService';
 
+
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
 let getTopDoctorHome = (limitInput) => {
@@ -536,6 +537,7 @@ let sendRemedy = (data) => {
 }
 
 
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
@@ -548,4 +550,5 @@ module.exports = {
     getListPatientForDoctor: getListPatientForDoctor,
     sendRemedy: sendRemedy,
     getListPatientHistoryForDoctor: getListPatientHistoryForDoctor,
+    
 }

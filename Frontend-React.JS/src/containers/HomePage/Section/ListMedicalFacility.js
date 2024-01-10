@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Slider from 'react-slick';
 import './MedicalFacility.scss';
 import { getAllClinic } from '../../../services/userService';
-import { FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router';
+import './List.scss';
+import HomeHeader from '../HomeHeader';
 
 class MedicalFacility extends Component {
 
@@ -30,29 +30,18 @@ class MedicalFacility extends Component {
         }
     }
 
-    returnList = () => {
-        if (this.props.history) {
-            this.props.history.push(`/list-medical-facility`)
-        }
-    }
-
     render() {
         let { dataClinics } = this.state;
         return (
-            <div className='section-share section-medical-facility'>
-                <div className='section-container'>
-                    <div className='section-header'>
-                        <span className='title-section'>
-                            <FormattedMessage id='homepage.outstanding-medical-facilities' />
-                        </span>
-                        <button className='btn-section'
-                            onClick={() => this.returnList()}
-                        >
-                            <FormattedMessage id='homepage.more-infor' />
-                        </button>
-                    </div>
-                    <div className='section-body'>
-                        <Slider {...this.props.settings}>
+            <>
+                <HomeHeader></HomeHeader>
+                <div className='medical-facility'>
+                    <div className='container'>
+                        <div className='section-header'>
+                            <span className='title-section'>DANH SÁCH CƠ SỞ Y TẾ</span>
+                        </div>
+                        <div className='body'>
+
                             {dataClinics && dataClinics.length > 0 &&
                                 dataClinics.map((item, index) => {
                                     return (
@@ -71,13 +60,13 @@ class MedicalFacility extends Component {
                                 })
 
                             }
+                        </div>
 
-
-                        </Slider>
                     </div>
-
                 </div>
-            </div>
+
+            </>
+
         );
     }
 

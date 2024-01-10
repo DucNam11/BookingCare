@@ -60,27 +60,32 @@ class ManageHistory extends Component {
         let res = await getAllPatientHistoryForDoctor({
             doctorId: user.id,
             date: formatedDate
-        })
+        });
+
         if (res && res.errCode === 0) {
-            let pdfBlobUrls = {};
+            let pdfBlobUrls = {}; // Sử dụng đối tượng thay vì mảng để lưu trữ URL Blob của từng file PDF
+
             for (let item of res.data) {
                 if (item.files) {
-                    const blob = new Blob([item.files]);
+                    // Chuyển đổi dữ liệu file thành Blob
+                    const bytes = new Uint8Array(item.files.data); // Giả sử item.files.data chứa dữ liệu file
+                    const blob = new Blob([bytes], { type: 'application/pdf' });
+
+                    // Tạo URL cho Blob
                     const pdfUrl = URL.createObjectURL(blob);
+                    pdfBlobUrls[item.id] = pdfUrl; // Lưu URL Blob vào đối tượng pdfBlobUrls với key là id của item
+
+
                     pdfBlobUrls[item.id] = pdfUrl;
+                    this.setState({
+                        dataPatient: res.data,
+                        pdfBlobUrls: pdfBlobUrls
+                    });
                 }
             }
-            this.setState({
-                dataPatient: res.data,
-                pdfBlobUrls: pdfBlobUrls, // Cập nhật trạng thái mới
-            })
-            // this.setState({
-            //     dataPatient: res.data
-            // })
         }
+    };
 
-
-    }
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.language !== prevProps.language) {
@@ -157,6 +162,7 @@ class ManageHistory extends Component {
     render() {
 
         let { dataPatient, isOpenRemedyModal, dataModal, pdfBlobUrls } = this.state;
+        console.log(pdfBlobUrls)
         let { language } = this.props;
         console.log(dataPatient)
         return (
