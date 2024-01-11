@@ -174,34 +174,36 @@ let updateUserData = (data) => {
                     errMessage: "Missing requaired paramaters"
                 })
             }
-            let user = await db.User.findOne({
-                where: { id: data.id },
-                raw: false
-
-            })
-            if (user) {
-
-                user.firstName = data.firstName;
-                user.lastName = data.lastName;
-                user.address = data.address;
-                user.roleId = data.roleId;
-                user.positionId = data.positionId;
-                user.gender = data.gender;
-                user.phoneNumber = data.phoneNumber;
-                if (data.avatar) {
-                    user.image = data.avatar;
-                }
-                await user.save();
-                resolve({
-                    errCode: 0,
-                    message: "Update succeeds"
-                });
-            }
             else {
-                resolve({
-                    errCode: 1,
-                    errMessage: "User not found"
-                });
+                let user = await db.User.findOne({
+                    where: { id: data.id },
+                    raw: false
+
+                })
+                if (user) {
+
+                    user.firstName = data.firstName;
+                    user.lastName = data.lastName;
+                    user.address = data.address;
+                    user.roleId = data.roleId;
+                    user.positionId = data.positionId;
+                    user.gender = data.gender;
+                    user.phoneNumber = data.phoneNumber;
+                    if (data.avatar) {
+                        user.image = data.avatar;
+                    }
+                    await user.save();
+                    resolve({
+                        errCode: 0,
+                        message: "Update succeeds"
+                    });
+                }
+                else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: "User not found"
+                    });
+                }
             }
 
         } catch (e) {
