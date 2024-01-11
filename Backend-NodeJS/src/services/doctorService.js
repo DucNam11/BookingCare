@@ -23,6 +23,24 @@ let getTopDoctorHome = (limitInput) => {
                 raw: true,
                 nest: true,
             })
+            // Lấy thông tin bác sĩ từ bảng Doctor_Infor cho mỗi bác sĩ
+            for (let i = 0; i < users.length; i++) {
+                let doctorInfo = await db.Doctor_Infor.findOne({
+                    where: {
+                        doctorId: users[i].id
+                    }
+                });
+                users[i].doctorInfo = doctorInfo;
+            }
+            // Lấy thông tin bác sĩ từ bảng Doctor_Infor cho mỗi bác sĩ
+            for (let i = 0; i < users.length; i++) {
+                let specialty = await db.Specialty.findOne({
+                    where: {
+                        id: users[i].doctorInfo.specialtyId
+                    }
+                });
+                users[i].specialty = specialty;
+            }
             resolve({
                 errCode: 0,
                 data: users
@@ -32,6 +50,8 @@ let getTopDoctorHome = (limitInput) => {
         }
     })
 }
+
+
 
 let getAllDoctors = () => {
     return new Promise(async (resolve, reject) => {
@@ -536,45 +556,50 @@ let sendRemedy = (data) => {
     })
 }
 
-let getSpecialty = (doctorId) => {
+let getSpecialty = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!doctorId) {
+            if (!data.id) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing required params"
-                })
-            } else {
-                //update patient status
-                let appointment = await db.Doctor_Infor.findOne({
-                    where: {
-                        doctorId: doctorId,
-                    },
-                    raw: false
-                })
-                if (appointment) {
-                    let specialty = await db.Specialty.findOne({
-                        where: {
-                            id: appointment.specialtyId,
-                        },
-                        raw: false
-                    })
-                    resolve({
-                        errCode: 0,
-                        errMessage: 'Ok',
-                        data: specialty
-                    })
-                }
-
-
+                });
+                return;
             }
 
+            // Kiểm tra xem bác sĩ có tồn tại không
+            let appointment = await db.Doctor_Infor.findOne({
+                where: {
+                    doctorId: data.id
+                },
+                raw: false
+            });
+            if (!appointment) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Doctor not found',
+                });
+                return;
+            }
 
+            // Lấy thông tin chuyên ngành
+            let specialty = await db.Specialty.findOne({
+                where: {
+                    id: appointment.specialtyId,
+                },
+                raw: false
+            });
+
+            resolve({
+                errCode: 0,
+                errMessage: 'Ok',
+                data: specialty
+            });
         } catch (e) {
-            reject(e)
+            reject(e);
         }
-    })
-}
+    });
+};
 
 
 

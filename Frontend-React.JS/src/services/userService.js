@@ -73,6 +73,10 @@ const getAllSpecialty = () => {
     return axios.get('/api/get-specialty')
 }
 
+const getNameSpecialty = (data) => {
+    return axios.get(`/api/get-specialtyId?doctorId=${data.doctorId}`)
+}
+
 const getAllDetailSpecialtyById = (data) => {
     return axios.get(`/api/get-detail-specialty-by-id?id=${data.id}&location=${data.location}`);
 }
@@ -131,7 +135,7 @@ export {
     getAllPatientForDoctor, postSendRemedy,
     getAllPatientHistoryForDoctor,
     createNewHandbook, getAllHandbook,
-    getAllDetailHandbookById,
+    getAllDetailHandbookById, getNameSpecialty
 
 
 }
