@@ -107,9 +107,9 @@ class Login extends Component {
                         <div className='col-12 '>
                             <button className='btn-login' onClick={() => { this.handleLogin() }}>Login</button>
                         </div>
-                        <div className='col-12 '>
+                        {/* <div className='col-12 '>
                             <button className='btn-login' onClick={() => { this.returnToSignUp() }}>Sign Up</button>
-                        </div>
+                        </div> */}
                         <div className='col-12 text-center mt-3'>
                             <span className='text-othor-login'>Or Login With:</span>
                         </div>
