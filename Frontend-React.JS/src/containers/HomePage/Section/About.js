@@ -15,9 +15,9 @@ class About extends Component {
                 <div className="w60">
                     <div className="about-content">
                         <div className="about-header">
-                            <span className="about-title">Truyền thông nói về Booking Doctor</span>
+                            <span className="about-title">Truyền thông nói về Health Booking</span>
                         </div>
-                        <p className='col-12'>Booking Doctor là trang wep đặt lịch khám bệnh nổi tiếng nhất Việt Nam hiện nay và được rất nhiều các kênh đưa tin</p>
+                        <p className='col-12'>Health Booking là trang wep đặt lịch khám bệnh nổi tiếng nhất Việt Nam hiện nay và được rất nhiều các kênh đưa tin</p>
                         <div className="about-body">
                             <div className="about-video">
                                 <iframe

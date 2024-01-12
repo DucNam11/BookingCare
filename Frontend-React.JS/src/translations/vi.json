@@ -64,7 +64,6 @@
         "speciality-poplular": "Chuyên khoa phổ biến",
         "outstanding-medical-facilities": "Cơ sở y tế nổi bật",
         "handbook": "Cẩm nang"
-
     },
     "manage-schedule": {
         "title": "Quản lí kế hoạch khám bệnh của bác sĩ",
@@ -117,5 +116,31 @@
             "specialty": "Chọn chuyên khoa",
             "select-clinic": "Chọn phòng khám"
         }
+    },
+    "footerabout": {
+        "aboutus": "VỀ CHÚNG TÔI",
+        "mysystem": "Hệ thống chăm sóc sức khẻo",
+        "ourdoctor": "Bác sĩ của chúng tôi",
+        "cooperate": "Hợp tác với chúng tôi",
+        "recruitment": "Tuyển dụng",
+        "news": "Tin tức mới nhất",
+        "policy": "Chính sách bảo mật"
+    },
+    "footerservice": {
+        "myservice": "DỊCH VỤ CỦA CHÚNG TÔI",
+        "make": "Hẹn gặp bác sĩ",
+        "package": "Các gói dịch vụ",
+        "customer": "Dành cho khách hàng",
+        "resolve": "Giải quyết khiếu nại",
+        "how": "Chúng tôi hoạt động như thế nào",
+        "faq": "Câu hỏi thường gặp"
+    },
+    "footercontact": {
+        "name": "Công ty Cổ phần Health Care",
+        "address": "Quận Cầu Giấy, TP. Hà Nội, Việt Nam",
+        "tel": "Điện thoại: ",
+        "support": "Hỗ trợ: ",
+        "signup": "Đăng ký",
+        "login": "Đăng nhập"
     }
 }

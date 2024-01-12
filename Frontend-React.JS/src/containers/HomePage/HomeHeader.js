@@ -10,7 +10,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap
 import Select from 'react-select'
 import logo from '../../assets/images/logo.svg';
 import logo1 from '../../assets/images/bookingdoctor.png'
-import logo2 from '../../assets/images/Logo1.svg'
+import logo2 from '../../assets/images/HealthBooking.svg'
 
 class HomeHeader extends Component {
 
@@ -155,7 +155,7 @@ class HomeHeader extends Component {
 
                         <div className='left-content'>
                             <i className='fas fa-bars'></i>
-                            <img className='header-logo' src={logo1} onClick={() => this.returnToHome()}></img>
+                            <img className='header-logo' src={logo2} onClick={() => this.returnToHome()}></img>
                         </div>
                         <div className='center-content'>
                             <div className='child-content'

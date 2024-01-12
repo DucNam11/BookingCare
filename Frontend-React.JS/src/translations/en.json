@@ -116,5 +116,31 @@
             "specialty": "Specialty",
             "select-clinic": "Clinic"
         }
+    },
+    "footerabout": {
+        "aboutus": "ABOUT US",
+        "mysystem": "Healthcare system",
+        "ourdoctor": "Our doctor",
+        "cooperate": "Cooperate with us",
+        "recruitment": "Recruitment",
+        "news": "Latest news",
+        "policy": "Privacy Policy"
+    },
+    "footerservice": {
+        "myservice": "OUR SERVICES",
+        "make": "Make an appointment with your doctor",
+        "package": "Service packages",
+        "customer": "For customers",
+        "resolve": "Resolve complaints",
+        "how": "How we operate",
+        "faq": "Frequently asked questions"
+    },
+    "footercontact": {
+        "name": "Health Care Joint Stock Company",
+        "address": "Cau Giay District, City. Hanoi Vietnam",
+        "tel": "Phone:",
+        "support": "Support: ",
+        "signup": "Register",
+        "login": "Log in"
     }
 }
