@@ -8,7 +8,9 @@ import { changeLanguageApp } from '../../store/actions';
 import { withRouter } from 'react-router';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 import Select from 'react-select'
-import logo from '../../assets/images/logo.svg'
+import logo from '../../assets/images/logo.svg';
+import logo1 from '../../assets/images/bookingdoctor.png'
+import logo2 from '../../assets/images/Logo1.svg'
 
 class HomeHeader extends Component {
 
@@ -150,9 +152,10 @@ class HomeHeader extends Component {
             <React.Fragment>
                 <div className="home-header-container">
                     <div className="home-header-content">
+
                         <div className='left-content'>
                             <i className='fas fa-bars'></i>
-                            <img className='header-logo' src={logo} onClick={() => this.returnToHome()}></img>
+                            <img className='header-logo' src={logo1} onClick={() => this.returnToHome()}></img>
                         </div>
                         <div className='center-content'>
                             <div className='child-content'

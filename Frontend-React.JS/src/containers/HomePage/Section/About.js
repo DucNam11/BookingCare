@@ -1,45 +1,55 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import '../HomePage.scss';
 
+import './About.scss';
 
 class About extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
 
     render() {
-
         return (
-            <div className='section-share section-about'>
+            <div className={`about-container ${this.props.background}`}>
+                <div className="w60">
+                    <div className="about-content">
+                        <div className="about-header">
+                            <span className="about-title">Truyền thông nói về Booking Doctor</span>
+                        </div>
+                        <p className='col-12'>Booking Doctor là trang wep đặt lịch khám bệnh nổi tiếng nhất Việt Nam hiện nay và được rất nhiều các kênh đưa tin</p>
+                        <div className="about-body">
+                            <div className="about-video">
+                                <iframe
+                                    width="560"
+                                    height="315"
+                                    src="https://www.youtube.com/embed/FyDQljKtWnI"
+                                    title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
+                            <div className="about-list">
 
-                <div className='section-about-header'>
-                    Truyền Thông Nói Về Booking Care
-                </div>
-                <div className='section-about-content'>
-                    <div className='content-left'>
-                        <iframe width="530" height="320"
-                            src="https://www.youtube.com/embed/jh5U5BnpGN8"
-                            title="The Future of Healthcare" frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen>
-
-                        </iframe>
-                    </div>
-                    <div className='content-right'>
-
+                                <img
+                                    src="https://github.com/nguyenthang621/public_image_bookingcare/blob/main/Capture.PNG?raw=true"
+                                    alt="img"
+                                ></img>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        )
-
+        );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.user.isLoggedIn,
-    };
+const mapStateToProps = (state) => {
+    return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
     return {};
 };
 

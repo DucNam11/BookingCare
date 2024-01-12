@@ -176,15 +176,23 @@
             width: 60%;
         
         }
-        .content-right{
+        .content-right {
             width: 40%;
-            p{
-                text-align: justify;
-                font-style: italic;
-                padding: 15px;
+          
+            p {
+              text-align: justify;
+              font-style: italic;
+              
             }
-    
-        }
+            .header-logo {
+                display: block;
+                margin: 0 auto; 
+                max-width: 100%; 
+                height: auto;
+              }
+          }
+          
+          
     }
     
 }

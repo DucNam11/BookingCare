@@ -267,7 +267,6 @@ let bulkCreateSchedule = (data) => {
                 let toCreate = _.differenceWith(schedule, exist, (a, b) => {
                     return a.timeType === b.timeType && +a.date === +b.date;
                 });
-
                 if (toCreate && toCreate.length > 0) {
                     await db.Schedule.bulkCreate(toCreate);
                 }
