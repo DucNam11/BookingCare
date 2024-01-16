@@ -76,3 +76,17 @@ export const doctorMenu = [
 
 ];
 
+export const patientMenu = [
+
+    { //quản lý lịch khám bệnh
+        name: 'Quản lý',
+        menus: [
+            {
+                name: 'Quản lý lịch khám', link: '/doctor/patient'
+            },
+        ]
+    },
+
+
+];
+

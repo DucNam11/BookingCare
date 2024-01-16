@@ -169,6 +169,32 @@ let getSpecialty = async (req, res) => {
 }
 
 
+let cancelSchedule = async (req, res) => {
+    if (!req.body) {
+        return res.status(200).json({
+            errCode: 1,
+            message: "Missing reqired parameters!"
+        })
+    }
+    let message = await doctorService.cancelSchedule(req.body);
+    return res.status(200).json(message);
+}
+
+
+
+let getListPatientForPatient = async (req, res) => {
+    try {
+
+        let infor = await doctorService.getListPatientForPatient(req.query.patientId, req.query.date);
+        return res.status(200).json(infor);
+    } catch (e) {
+
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from the server"
+        })
+    }
+}
 
 
 
@@ -187,5 +213,7 @@ module.exports = {
     sendRemedy: sendRemedy,
     getListPatientHistoryForDoctor: getListPatientHistoryForDoctor,
     getSpecialty: getSpecialty,
+    cancelSchedule: cancelSchedule,
+    getListPatientForPatient: getListPatientForPatient,
 
 }

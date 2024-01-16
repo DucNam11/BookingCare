@@ -602,6 +602,102 @@ let getSpecialty = (data) => {
 
 
 
+let cancelSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.patientId || !data.date || !data.timeType || !data.doctorId) {
+                reject({
+                    errCode: 1,
+                    errMessage: "Missing required params"
+                });
+            } else {
+                let booking = await db.Booking.findOne({
+                    where: {
+                        statusId: 'S2',
+                        patientId: data.patientId,
+                        date: data.date,
+                        timeType: data.timeType,
+                    },
+                });
+
+                if (!booking) {
+                    reject({
+                        errCode: 2,
+                        errMessage: `The booking doesn't exist`
+                    });
+                } else {
+                    await db.Booking.destroy({
+                        where: {
+                            statusId: 'S2',
+                            patientId: data.patientId,
+                            date: data.date,
+                            timeType: data.timeType,
+                        },
+                    });
+                    await db.Schedule.create({
+                        maxNumber: 10,
+                        date: data.date,
+                        timeType: data.timeType,
+                        doctorId: data.doctorId,
+                    })
+                    resolve({
+                        errCode: 0,
+                        errMessage: `The booking has been deleted`
+                    });
+                }
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+
+let getListPatientForPatient = (patientId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!patientId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required params"
+                })
+            } else {
+                let data = await db.Booking.findAll({
+                    where: {
+                        statusId: 'S2',
+                        patientId: patientId,
+                        date: date
+                    },
+                    include: [
+                        {
+                            model: db.User, as: 'patientData',
+                            attributes:
+                                ['email', 'firstName', 'address', 'gender']
+                            ,
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] },
+                            ]
+                        },
+                        {
+                            model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi']
+                        }
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
+
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
@@ -615,4 +711,6 @@ module.exports = {
     sendRemedy: sendRemedy,
     getListPatientHistoryForDoctor: getListPatientHistoryForDoctor,
     getSpecialty: getSpecialty,
+    cancelSchedule: cancelSchedule,
+    getListPatientForPatient: getListPatientForPatient,
 }

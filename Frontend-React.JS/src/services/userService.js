@@ -109,6 +109,10 @@ const getAllPatientForDoctor = (data) => {
     return axios.get(`/api/get-list-patient-for-doctor?doctorId=${data.doctorId}&date=${data.date}`);
 }
 
+const getAllPatientForPatient = (data) => {
+    return axios.get(`/api/get-list-patient-for-patient?patientId=${data.patientId}&date=${data.date}`);
+}
+
 const getAllPatientHistoryForDoctor = (data) => {
     return axios.get(`/api/get-list-patient-history-for-doctor?doctorId=${data.doctorId}&date=${data.date}`);
 }
@@ -117,6 +121,19 @@ const postSendRemedy = (data) => {
     return axios.post('/api/send-remedy', data);
 }
 
+// const cancelSchedule = (data) => {
+//     return axios.get(`/api/cancel-schedule?patientId=${data.patientId}&date=${data.date}?timeType=${data.timeType}`);
+// }
+const cancelSchedule = (data) => {
+    return axios.delete(`/api/cancel-schedule`, {
+        data: {
+            patientId: data.patientId,
+            date: data.date,
+            timeType: data.timeType,
+            doctorId: data.doctorId,
+        }
+    });
+}
 
 
 
@@ -135,7 +152,8 @@ export {
     getAllPatientForDoctor, postSendRemedy,
     getAllPatientHistoryForDoctor,
     createNewHandbook, getAllHandbook,
-    getAllDetailHandbookById, getNameSpecialty
+    getAllDetailHandbookById, getNameSpecialty, cancelSchedule,
+    getAllPatientForPatient,
 
 
 }
